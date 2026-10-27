@@ -6,57 +6,60 @@ public class BrailleCell : MonoBehaviour
 
     // Private member data
     BrailleDot[] dots;
-    char character;
+    int index;
+    bool started = false;
 
     // Mutators
     public void SetCharacter(char character)
     {
         //Debug.Log("cell: SetCharacter(" + character + ")");
         character = char.ToUpper(character);
-        if (!Braille.alphabet.ContainsKey(character))
+        if (!Braille.ContainsCharacter(character))
         {
-            Debug.LogError("ERROR: " + character + " does not have a braille index!");
+            Debug.LogError("ERROR: \"" + character + "\" cannot be represented in Braille!");
             return;
         }
-        this.character = character;
-        SetIndex(Braille.alphabet[character]);
+        SetIndex(Braille.GetIndex(character));
     }
-    void SetIndex(int index)
+    public void SetIndex(int index)
     {
-        Debug.Log("cell: SetIndex(" + index + ")");
+        this.index = index;
+        // Update dots
+        if (!started)
+        {
+            return;
+        }
         for (int i = 5; i >= 0; i--)
         {
-            Debug.Log("i: " + i);
             int value = (int)Mathf.Pow(2, i);
-            Debug.Log("value: " + value);
             if (index >= value)
             {
-                Debug.Log("index (" + index + ") >= value (" + value + ")");
                 index -= value;
-                Debug.Log("new index: " + index);
                 dots[i].SetOn(true);
-                Debug.Log("dot enabled");
             }
             else
             {
-                Debug.Log("index (" + index + ") < value (" + value + ")");
                 dots[i].SetOn(false);
-                Debug.Log("dot disabled");
             }
         }
     }
     // Accessors
     public char GetCharacter()
     {
-        return character;
+        return Braille.GetCharacter(index);
     }
     public int GetIndex()
     {
-        return Braille.alphabet[character];
+        return index;
+    }
+    public bool HasCharacter()
+    {
+        return Braille.ContainsIndex(index);
     }
     // Other
     void Start()
     {
+        started = true;
         dots = new BrailleDot[6];
         for (int i = 0; i < 6; i++)
         {
@@ -64,5 +67,6 @@ public class BrailleCell : MonoBehaviour
             dots[i].SetParent(this);
             dots[i].SetOn(false);
         }
+        SetIndex(index);
     }
 }

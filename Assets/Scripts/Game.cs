@@ -1,26 +1,162 @@
 using UnityEngine;
+using UnityEngine.UI;
+using System.Collections.Generic;
+using TMPro;
 
 public class Game : MonoBehaviour
 {
-    // Serialized objects
-    [SerializeField] BrailleCell cell;
+    // Data
+    [SerializeField] float submitDelay = 0.025f;
+    float timer;
+    bool counting;
+    Dictionary<Key, bool> pressedKeys;
 
+    // Serialized objects
+    [SerializeField] BrailleCell brailleCellPrefab;
+    [SerializeField] Transform paper;
+    [SerializeField] TMP_Text textLabel;
+    [SerializeField] Slider slider;
+    [SerializeField] Key[] keys;
+    [SerializeField] Key keySpace;
+
+    void Start()
+    {
+        textLabel.text = "";
+        pressedKeys = new()
+        {
+            {keys[0], false },
+            {keys[1], false },
+            {keys[2], false },
+            {keys[3], false },
+            {keys[4], false },
+            {keys[5], false },
+        };
+        counting = false;
+        timer = 0;
+    }
     void Update()
     {
-        if (UnityEngine.InputSystem.Keyboard.current.aKey.wasPressedThisFrame)
+        bool keyPressed = false;
+        if (UnityEngine.InputSystem.Keyboard.current.sKey.wasPressedThisFrame)
         {
-            //Debug.Log("A pressed");
-            cell.SetCharacter('a');
+            keys[0].OnDown();
+            pressedKeys[keys[0]] = true;
+            keyPressed = true;
         }
-        else if (UnityEngine.InputSystem.Keyboard.current.bKey.wasPressedThisFrame)
+        else if (UnityEngine.InputSystem.Keyboard.current.sKey.wasReleasedThisFrame)
         {
-            //Debug.Log("B pressed");
-            cell.SetCharacter('b');
+            keys[0].OnUp();
         }
-        else if (UnityEngine.InputSystem.Keyboard.current.cKey.wasPressedThisFrame)
+        if (UnityEngine.InputSystem.Keyboard.current.dKey.wasPressedThisFrame)
         {
-            //Debug.Log("C pressed");
-            cell.SetCharacter('c');
+            keys[1].OnDown();
+            pressedKeys[keys[1]] = true;
+            keyPressed = true;
+        }
+        else if (UnityEngine.InputSystem.Keyboard.current.dKey.wasReleasedThisFrame)
+        {
+            keys[1].OnUp();
+        }
+        if (UnityEngine.InputSystem.Keyboard.current.fKey.wasPressedThisFrame)
+        {
+            keys[2].OnDown();
+            pressedKeys[keys[2]] = true;
+            keyPressed = true;
+        }
+        else if (UnityEngine.InputSystem.Keyboard.current.fKey.wasReleasedThisFrame)
+        {
+            keys[2].OnUp();
+        }
+        if (UnityEngine.InputSystem.Keyboard.current.gKey.wasPressedThisFrame || UnityEngine.InputSystem.Keyboard.current.hKey.wasPressedThisFrame)
+        {
+            keySpace.OnDown();
+            counting = false;
+            slider.value = 0;
+            timer = 0;
+            CreateBrailleCell(0);
+        }
+        else if ((UnityEngine.InputSystem.Keyboard.current.gKey.wasReleasedThisFrame && !UnityEngine.InputSystem.Keyboard.current.hKey.isPressed) || (UnityEngine.InputSystem.Keyboard.current.hKey.wasReleasedThisFrame && !UnityEngine.InputSystem.Keyboard.current.gKey.isPressed))
+        {
+            keySpace.OnUp();
+        }
+        if (UnityEngine.InputSystem.Keyboard.current.jKey.wasPressedThisFrame)
+        {
+            keys[3].OnDown();
+            pressedKeys[keys[3]] = true;
+            keyPressed = true;
+        }
+        else if (UnityEngine.InputSystem.Keyboard.current.jKey.wasReleasedThisFrame)
+        {
+            keys[3].OnUp();
+        }
+        if (UnityEngine.InputSystem.Keyboard.current.kKey.wasPressedThisFrame)
+        {
+            keys[4].OnDown();
+            pressedKeys[keys[4]] = true;
+            keyPressed = true;
+        }
+        else if (UnityEngine.InputSystem.Keyboard.current.kKey.wasReleasedThisFrame)
+        {
+            keys[4].OnUp();
+        }
+        if (UnityEngine.InputSystem.Keyboard.current.lKey.wasPressedThisFrame)
+        {
+            keys[5].OnDown();
+            pressedKeys[keys[5]] = true;
+            keyPressed = true;
+        }
+        else if (UnityEngine.InputSystem.Keyboard.current.lKey.wasReleasedThisFrame)
+        {
+            keys[5].OnUp();
+        }
+        if (keyPressed && timer <= 0)
+        {
+            timer = submitDelay;
+            counting = true;
+            slider.value = 1;
+        }
+        else if (counting && timer <= 0)
+        {
+            counting = false;
+            slider.value = 0;
+            OnTimerExpire();
+        }
+        else if (counting)
+        {
+            timer -= Time.deltaTime;
+            slider.value = timer / submitDelay;
+        }
+    }
+    public void OnTimerExpire()
+    {
+        int index = 0;
+        for (int i = 0; i < 6; i++)
+        {
+            if (pressedKeys[keys[i]])
+            {
+                index += (int)Mathf.Pow(2, i);
+                pressedKeys[keys[i]] = false;
+            }
+        }
+        CreateBrailleCell(index);
+    }
+    // Index of 0 is a space
+    public void CreateBrailleCell(int index)
+    {
+        BrailleCell brailleCell = Instantiate(brailleCellPrefab, paper);
+        brailleCell.SetIndex(index);
+        if (brailleCell.HasCharacter())
+        {
+            textLabel.text += brailleCell.GetCharacter();
+        }
+    }
+    public void OnClearButtonPress()
+    {
+        textLabel.text = "";
+        int childCount = paper.childCount;
+        for (int i = 0; i < childCount; i++)
+        {
+            Destroy(paper.GetChild(i).gameObject);
         }
     }
 }

@@ -1,9 +1,10 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Braille
 {
-    public static Dictionary<char, int> alphabet = new Dictionary<char, int>()
+    static Dictionary<char, int> alphabet = new()
     {
         {'A', 1},
         {'B', 3},
@@ -47,7 +48,44 @@ public class Braille
         {'.', 50},
         {'?', 38},
 
-        {'\a', 32},
+        {' ', 0 },
         {'\n', 60},
     };
+    public static int GetIndex(char character)
+    {
+        return alphabet[character];
+    }
+    public static char GetCharacter(int index)
+    {
+        foreach (KeyValuePair<char, int> pair in alphabet)
+        {
+            if (pair.Value == index)
+            {
+                return pair.Key;
+            }
+        }
+        return '\0';
+    }
+    public static bool ContainsIndex(int index)
+    {
+        foreach (KeyValuePair<char, int> pair in alphabet)
+        {
+            if (pair.Value == index)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    public static bool ContainsCharacter(char character)
+    {
+        foreach (KeyValuePair<char, int> pair in alphabet)
+        {
+            if (pair.Key == character)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }
