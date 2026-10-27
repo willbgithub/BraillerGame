@@ -15,7 +15,6 @@ public class Game : MonoBehaviour
     [SerializeField] BrailleCell brailleCellPrefab;
     [SerializeField] Transform paper;
     [SerializeField] TMP_Text textLabel;
-    [SerializeField] Slider slider;
     [SerializeField] Key[] keys;
     [SerializeField] Key keySpace;
 
@@ -24,12 +23,12 @@ public class Game : MonoBehaviour
         textLabel.text = "";
         pressedKeys = new()
         {
-            {keys[0], false },
-            {keys[1], false },
-            {keys[2], false },
-            {keys[3], false },
-            {keys[4], false },
-            {keys[5], false },
+            {keys[0], false},
+            {keys[1], false},
+            {keys[2], false},
+            {keys[3], false},
+            {keys[4], false},
+            {keys[5], false},
         };
         counting = false;
         timer = 0;
@@ -39,13 +38,13 @@ public class Game : MonoBehaviour
         bool keyPressed = false;
         if (UnityEngine.InputSystem.Keyboard.current.sKey.wasPressedThisFrame)
         {
-            keys[0].OnDown();
-            pressedKeys[keys[0]] = true;
+            keys[2].OnDown();
+            pressedKeys[keys[2]] = true;
             keyPressed = true;
         }
         else if (UnityEngine.InputSystem.Keyboard.current.sKey.wasReleasedThisFrame)
         {
-            keys[0].OnUp();
+            keys[2].OnUp();
         }
         if (UnityEngine.InputSystem.Keyboard.current.dKey.wasPressedThisFrame)
         {
@@ -59,23 +58,22 @@ public class Game : MonoBehaviour
         }
         if (UnityEngine.InputSystem.Keyboard.current.fKey.wasPressedThisFrame)
         {
-            keys[2].OnDown();
-            pressedKeys[keys[2]] = true;
+            keys[0].OnDown();
+            pressedKeys[keys[0]] = true;
             keyPressed = true;
         }
         else if (UnityEngine.InputSystem.Keyboard.current.fKey.wasReleasedThisFrame)
         {
-            keys[2].OnUp();
+            keys[0].OnUp();
         }
-        if (UnityEngine.InputSystem.Keyboard.current.gKey.wasPressedThisFrame || UnityEngine.InputSystem.Keyboard.current.hKey.wasPressedThisFrame)
+        if (UnityEngine.InputSystem.Keyboard.current.spaceKey.wasPressedThisFrame)
         {
             keySpace.OnDown();
             counting = false;
-            slider.value = 0;
             timer = 0;
             CreateBrailleCell(0);
         }
-        else if ((UnityEngine.InputSystem.Keyboard.current.gKey.wasReleasedThisFrame && !UnityEngine.InputSystem.Keyboard.current.hKey.isPressed) || (UnityEngine.InputSystem.Keyboard.current.hKey.wasReleasedThisFrame && !UnityEngine.InputSystem.Keyboard.current.gKey.isPressed))
+        else if (UnityEngine.InputSystem.Keyboard.current.spaceKey.wasReleasedThisFrame)
         {
             keySpace.OnUp();
         }
@@ -113,18 +111,15 @@ public class Game : MonoBehaviour
         {
             timer = submitDelay;
             counting = true;
-            slider.value = 1;
         }
         else if (counting && timer <= 0)
         {
             counting = false;
-            slider.value = 0;
             OnTimerExpire();
         }
         else if (counting)
         {
             timer -= Time.deltaTime;
-            slider.value = timer / submitDelay;
         }
     }
     public void OnTimerExpire()

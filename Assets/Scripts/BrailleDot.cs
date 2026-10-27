@@ -7,6 +7,7 @@ public class BrailleDot : MonoBehaviour
     [SerializeField] Image image;
 
     // Private member data
+    const float OFF_SCALE = 0.15f;
     BrailleCell parent;
     bool on;
 
@@ -18,7 +19,14 @@ public class BrailleDot : MonoBehaviour
     public void SetOn(bool on)
     {
         this.on = on;
-        image.gameObject.SetActive(on);
+        if (on)
+        {
+            image.transform.localScale = new Vector3(1, 1, 1);
+        }
+        else
+        {
+            image.transform.localScale = new Vector3(OFF_SCALE, OFF_SCALE, OFF_SCALE);
+        }
     }
 
     // Accessors
