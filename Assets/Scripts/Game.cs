@@ -13,7 +13,8 @@ public class Game : MonoBehaviour
 
     // Serialized objects
     [SerializeField] BrailleCell brailleCellPrefab;
-    [SerializeField] Transform paper;
+    [SerializeField] Transform paperContent;
+    [SerializeField] ScrollRect scrollView;
     [SerializeField] TMP_Text textLabel;
     [SerializeField] Key[] keys;
     [SerializeField] Key keySpace;
@@ -138,20 +139,21 @@ public class Game : MonoBehaviour
     // Index of 0 is a space
     public void CreateBrailleCell(int index)
     {
-        BrailleCell brailleCell = Instantiate(brailleCellPrefab, paper);
+        BrailleCell brailleCell = Instantiate(brailleCellPrefab, paperContent);
         brailleCell.SetIndex(index);
         if (brailleCell.HasCharacter())
         {
             textLabel.text += brailleCell.GetCharacter();
         }
+        scrollView.verticalScrollbar.value = 0;
     }
     public void OnClearButtonPress()
     {
         textLabel.text = "";
-        int childCount = paper.childCount;
+        int childCount = paperContent.childCount;
         for (int i = 0; i < childCount; i++)
         {
-            Destroy(paper.GetChild(i).gameObject);
+            Destroy(paperContent.GetChild(i).gameObject);
         }
     }
 }
