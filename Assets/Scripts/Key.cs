@@ -9,20 +9,16 @@ public class Key : MonoBehaviour
     [SerializeField] Image background;
 
     // Private member data
-    bool pressed;
+    //bool pressed;
 
     public void OnDown()
     {
-        pressed = true;
+        //pressed = true;
         background.color = pressedColor;
     }
     public void OnUp()
     {
-        pressed = false;
+        //pressed = false;
         background.color = defaultColor;
-    }
-    public bool IsPressed()
-    {
-        return pressed;
     }
 }

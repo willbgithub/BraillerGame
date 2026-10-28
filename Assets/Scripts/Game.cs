@@ -9,18 +9,22 @@ public class Game : MonoBehaviour
     [SerializeField] float submitDelay = 0.025f;
     float timer;
     bool counting;
+    int scrollToBottom = 0;
     Dictionary<Key, bool> pressedKeys;
 
     // Serialized objects
     [SerializeField] BrailleCell brailleCellPrefab;
     [SerializeField] Transform paperContent;
+    [SerializeField] GameObject guide;
     [SerializeField] ScrollRect scrollView;
     [SerializeField] TMP_Text textLabel;
     [SerializeField] Key[] keys;
     [SerializeField] Key keySpace;
+    [SerializeField] Key keyBackspace;
 
     void Start()
     {
+        SetGuide(false);
         textLabel.text = "";
         pressedKeys = new()
         {
@@ -34,6 +38,66 @@ public class Game : MonoBehaviour
         counting = false;
         timer = 0;
     }
+    void SetGuide(bool guide)
+    {
+        this.guide.SetActive(guide);
+    }
+    void ToggleGuide()
+    {
+        SetGuide(!guide.activeSelf);
+    }
+    void OnTimerExpire()
+    {
+        int index = 0;
+        for (int i = 0; i < 6; i++)
+        {
+            if (pressedKeys[keys[i]])
+            {
+                index += (int)Mathf.Pow(2, i);
+                pressedKeys[keys[i]] = false;
+            }
+        }
+        CreateBrailleCell(index);
+    }
+    // Index of 0 is a space
+    void CreateBrailleCell(int index)
+    {
+        BrailleCell brailleCell = Instantiate(brailleCellPrefab, paperContent);
+        brailleCell.SetIndex(index);
+        if (brailleCell.HasCharacter())
+        {
+            textLabel.text += brailleCell.GetCharacter();
+        }
+        scrollToBottom = 3;
+    }
+    public void OnClearButtonPress()
+    {
+        textLabel.text = "";
+        int childCount = paperContent.childCount;
+        for (int i = 0; i < childCount; i++)
+        {
+            Destroy(paperContent.GetChild(i).gameObject);
+        }
+    }
+    void OnBackspaceDown()
+    {
+        keyBackspace.OnDown();
+        int childCount = paperContent.childCount;
+        if (childCount > 0)
+        {
+            BrailleCell cell = paperContent.GetChild(childCount - 1).GetComponent<BrailleCell>();
+            if (cell.HasCharacter())
+            {
+                textLabel.text = textLabel.text.Substring(0, textLabel.text.Length - 1);
+            }
+            Destroy(cell.gameObject);
+        }
+    }
+    void OnBackspaceUp()
+    {
+        keyBackspace.OnUp();
+    }
+
     void Update()
     {
         bool keyPressed = false;
@@ -108,6 +172,14 @@ public class Game : MonoBehaviour
         {
             keys[5].OnUp();
         }
+        if (UnityEngine.InputSystem.Keyboard.current.semicolonKey.wasPressedThisFrame)
+        {
+            OnBackspaceDown();
+        }
+        else if (UnityEngine.InputSystem.Keyboard.current.semicolonKey.wasReleasedThisFrame)
+        {
+            OnBackspaceUp();
+        }
         if (keyPressed && timer <= 0)
         {
             timer = submitDelay;
@@ -122,38 +194,16 @@ public class Game : MonoBehaviour
         {
             timer -= Time.deltaTime;
         }
-    }
-    public void OnTimerExpire()
-    {
-        int index = 0;
-        for (int i = 0; i < 6; i++)
+
+        if (UnityEngine.InputSystem.Keyboard.current.f1Key.wasPressedThisFrame)
         {
-            if (pressedKeys[keys[i]])
-            {
-                index += (int)Mathf.Pow(2, i);
-                pressedKeys[keys[i]] = false;
-            }
+            ToggleGuide();
         }
-        CreateBrailleCell(index);
-    }
-    // Index of 0 is a space
-    public void CreateBrailleCell(int index)
-    {
-        BrailleCell brailleCell = Instantiate(brailleCellPrefab, paperContent);
-        brailleCell.SetIndex(index);
-        if (brailleCell.HasCharacter())
+
+        if (scrollToBottom >= 1)
         {
-            textLabel.text += brailleCell.GetCharacter();
-        }
-        scrollView.verticalScrollbar.value = 0;
-    }
-    public void OnClearButtonPress()
-    {
-        textLabel.text = "";
-        int childCount = paperContent.childCount;
-        for (int i = 0; i < childCount; i++)
-        {
-            Destroy(paperContent.GetChild(i).gameObject);
+            scrollToBottom--;
+            scrollView.verticalScrollbar.value = 0;
         }
     }
 }
