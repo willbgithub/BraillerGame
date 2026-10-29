@@ -92,6 +92,7 @@ MonoBehaviour:
   defaultColor: {r: 1, g: 1, b: 1, a: 1}
   pressedColor: {r: 0.9529412, g: 0.8991124, b: 0.4745098, a: 1}
   background: {fileID: 5092356412397782108}
+  label: {fileID: 7520083954116919659}
 --- !u!1 &3230906743062559565
 GameObject:
   m_ObjectHideFlags: 0
@@ -124,10 +125,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 8981204301939827465}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 200, y: 50}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &691812006859812663
 CanvasRenderer:
@@ -184,10 +185,10 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 75
+  m_fontSize: 72
   m_fontSizeBase: 75
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0

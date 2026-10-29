@@ -2,15 +2,15 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using TMPro;
+using UnityEngine.InputSystem;
 
 public class Game : MonoBehaviour
 {
     // Data
-    [SerializeField] float submitDelay = 0.025f;
-    float timer;
-    bool counting;
     int scrollToBottom = 0;
-    Dictionary<Key, bool> pressedKeys;
+
+    
+    InputAction keyGuide;
 
     // Serialized objects
     [SerializeField] BrailleCell brailleCellPrefab;
@@ -18,49 +18,50 @@ public class Game : MonoBehaviour
     [SerializeField] GameObject guide;
     [SerializeField] ScrollRect scrollView;
     [SerializeField] TMP_Text textLabel;
-    [SerializeField] Key[] keys;
-    [SerializeField] Key keySpace;
-    [SerializeField] Key keyBackspace;
 
     void Start()
     {
         SetGuide(false);
         textLabel.text = "";
-        pressedKeys = new()
-        {
-            {keys[0], false},
-            {keys[1], false},
-            {keys[2], false},
-            {keys[3], false},
-            {keys[4], false},
-            {keys[5], false},
-        };
-        counting = false;
-        timer = 0;
+
+        
+        keyGuide = InputSystem.actions.FindAction("Guide");
     }
-    void SetGuide(bool guide)
+    void Awake()
+    {
+
+    }
+    public void SetGuide(bool guide)
     {
         this.guide.SetActive(guide);
     }
-    void ToggleGuide()
+    public void ToggleGuide()
     {
         SetGuide(!guide.activeSelf);
     }
-    void OnTimerExpire()
+    public void OnIndexWrite(int index)
     {
-        int index = 0;
-        for (int i = 0; i < 6; i++)
-        {
-            if (pressedKeys[keys[i]])
-            {
-                index += (int)Mathf.Pow(2, i);
-                pressedKeys[keys[i]] = false;
-            }
-        }
         CreateBrailleCell(index);
     }
+    public void OnBackspaceDown()
+    {
+        int childCount = paperContent.childCount;
+        if (childCount > 0)
+        {
+            BrailleCell cell = paperContent.GetChild(childCount - 1).GetComponent<BrailleCell>();
+            if (cell.HasCharacter())
+            {
+                textLabel.text = textLabel.text.Substring(0, textLabel.text.Length - 1);
+            }
+            Destroy(cell.gameObject);
+        }
+    }
+    public void OnSpaceDown()
+    {
+        CreateBrailleCell(0);
+    }
     // Index of 0 is a space
-    void CreateBrailleCell(int index)
+    public void CreateBrailleCell(int index)
     {
         BrailleCell brailleCell = Instantiate(brailleCellPrefab, paperContent);
         brailleCell.SetIndex(index);
@@ -79,127 +80,14 @@ public class Game : MonoBehaviour
             Destroy(paperContent.GetChild(i).gameObject);
         }
     }
-    void OnBackspaceDown()
-    {
-        keyBackspace.OnDown();
-        int childCount = paperContent.childCount;
-        if (childCount > 0)
-        {
-            BrailleCell cell = paperContent.GetChild(childCount - 1).GetComponent<BrailleCell>();
-            if (cell.HasCharacter())
-            {
-                textLabel.text = textLabel.text.Substring(0, textLabel.text.Length - 1);
-            }
-            Destroy(cell.gameObject);
-        }
-    }
-    void OnBackspaceUp()
-    {
-        keyBackspace.OnUp();
-    }
+
 
     void Update()
     {
-        bool keyPressed = false;
-        if (UnityEngine.InputSystem.Keyboard.current.sKey.wasPressedThisFrame)
-        {
-            keys[2].OnDown();
-            pressedKeys[keys[2]] = true;
-            keyPressed = true;
-        }
-        else if (UnityEngine.InputSystem.Keyboard.current.sKey.wasReleasedThisFrame)
-        {
-            keys[2].OnUp();
-        }
-        if (UnityEngine.InputSystem.Keyboard.current.dKey.wasPressedThisFrame)
-        {
-            keys[1].OnDown();
-            pressedKeys[keys[1]] = true;
-            keyPressed = true;
-        }
-        else if (UnityEngine.InputSystem.Keyboard.current.dKey.wasReleasedThisFrame)
-        {
-            keys[1].OnUp();
-        }
-        if (UnityEngine.InputSystem.Keyboard.current.fKey.wasPressedThisFrame)
-        {
-            keys[0].OnDown();
-            pressedKeys[keys[0]] = true;
-            keyPressed = true;
-        }
-        else if (UnityEngine.InputSystem.Keyboard.current.fKey.wasReleasedThisFrame)
-        {
-            keys[0].OnUp();
-        }
-        if (UnityEngine.InputSystem.Keyboard.current.spaceKey.wasPressedThisFrame)
-        {
-            keySpace.OnDown();
-            counting = false;
-            timer = 0;
-            CreateBrailleCell(0);
-        }
-        else if (UnityEngine.InputSystem.Keyboard.current.spaceKey.wasReleasedThisFrame)
-        {
-            keySpace.OnUp();
-        }
-        if (UnityEngine.InputSystem.Keyboard.current.jKey.wasPressedThisFrame)
-        {
-            keys[3].OnDown();
-            pressedKeys[keys[3]] = true;
-            keyPressed = true;
-        }
-        else if (UnityEngine.InputSystem.Keyboard.current.jKey.wasReleasedThisFrame)
-        {
-            keys[3].OnUp();
-        }
-        if (UnityEngine.InputSystem.Keyboard.current.kKey.wasPressedThisFrame)
-        {
-            keys[4].OnDown();
-            pressedKeys[keys[4]] = true;
-            keyPressed = true;
-        }
-        else if (UnityEngine.InputSystem.Keyboard.current.kKey.wasReleasedThisFrame)
-        {
-            keys[4].OnUp();
-        }
-        if (UnityEngine.InputSystem.Keyboard.current.lKey.wasPressedThisFrame)
-        {
-            keys[5].OnDown();
-            pressedKeys[keys[5]] = true;
-            keyPressed = true;
-        }
-        else if (UnityEngine.InputSystem.Keyboard.current.lKey.wasReleasedThisFrame)
-        {
-            keys[5].OnUp();
-        }
-        if (UnityEngine.InputSystem.Keyboard.current.semicolonKey.wasPressedThisFrame)
-        {
-            OnBackspaceDown();
-        }
-        else if (UnityEngine.InputSystem.Keyboard.current.semicolonKey.wasReleasedThisFrame)
-        {
-            OnBackspaceUp();
-        }
-        if (keyPressed && timer <= 0)
-        {
-            timer = submitDelay;
-            counting = true;
-        }
-        else if (counting && timer <= 0)
-        {
-            counting = false;
-            OnTimerExpire();
-        }
-        else if (counting)
-        {
-            timer -= Time.deltaTime;
-        }
-
-        if (UnityEngine.InputSystem.Keyboard.current.f1Key.wasPressedThisFrame)
+        if (keyGuide.WasPressedThisFrame())
         {
             ToggleGuide();
         }
-
         if (scrollToBottom >= 1)
         {
             scrollToBottom--;
