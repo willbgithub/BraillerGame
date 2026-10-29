@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 public class Brailler : MonoBehaviour
 {
     // Data
+    IBrailler parent;
     [SerializeField] float submitDelay = 0.025f;
     float timer;
     bool counting;
@@ -21,10 +22,14 @@ public class Brailler : MonoBehaviour
     InputAction keySpaceInput;
 
     // Serialized Objects
-    [SerializeField] Game parent;
     [SerializeField] Key[] keys;
     [SerializeField] Key keySpace;
     [SerializeField] Key keyBackspace;
+
+    public void SetParent(IBrailler parent)
+    {
+        this.parent = parent;
+    }
     public void OnTimerExpire()
     {
         int index = 0;

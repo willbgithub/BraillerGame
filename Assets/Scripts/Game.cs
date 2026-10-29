@@ -4,15 +4,15 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine.InputSystem;
 
-public class Game : MonoBehaviour
+public class Game : MonoBehaviour, IBrailler
 {
     // Data
     int scrollToBottom = 0;
-
-    
+        
     InputAction keyGuide;
 
     // Serialized objects
+    [SerializeField] Brailler brailler;
     [SerializeField] BrailleCell brailleCellPrefab;
     [SerializeField] Transform paperContent;
     [SerializeField] GameObject guide;
@@ -23,13 +23,11 @@ public class Game : MonoBehaviour
     {
         SetGuide(false);
         textLabel.text = "";
-
-        
         keyGuide = InputSystem.actions.FindAction("Guide");
     }
     void Awake()
     {
-
+        brailler.SetParent(this);
     }
     public void SetGuide(bool guide)
     {

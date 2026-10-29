@@ -882,6 +882,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ab4bb52a7a6b44499bc53cfcde1ddab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  brailler: {fileID: 824269865}
   brailleCellPrefab: {fileID: 4591812776537605265, guid: f265feb7825bd9f4aa6a0f8fd5aa8031, type: 3}
   paperContent: {fileID: 1894703738}
   guide: {fileID: 1850136705}
@@ -1466,6 +1467,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 785411231}
   m_CullTransparentMesh: 1
+--- !u!114 &824269865 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 239965342088666395, guid: 6926f5b81ca3a2949911180f1933e40c, type: 3}
+  m_PrefabInstance: {fileID: 102308806}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b6e72d0970d0da4b9da45a5fdd620d7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
 --- !u!1 &1648579565
 GameObject:
   m_ObjectHideFlags: 0
