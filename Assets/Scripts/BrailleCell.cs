@@ -56,6 +56,14 @@ public class BrailleCell : MonoBehaviour
     {
         return Braille.ContainsIndex(index);
     }
+    public static bool operator ==(BrailleCell cell1, BrailleCell cell2)
+    {
+        return cell1.index == cell2.index;
+    }
+    public static bool operator !=(BrailleCell cell1, BrailleCell cell2)
+    {
+        return cell1.index != cell2.index;
+    }
     // Other
     void Start()
     {
