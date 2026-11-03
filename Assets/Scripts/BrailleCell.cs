@@ -1,8 +1,14 @@
 using UnityEngine;
+using UnityEngine.UI;
 
+#pragma warning disable CS0660 // Type defines operator == or operator != but does not override Object.Equals(object o)
+#pragma warning disable CS0661 // Type defines operator == or operator != but does not override Object.GetHashCode()
 public class BrailleCell : MonoBehaviour
+#pragma warning restore CS0661 // Type defines operator == or operator != but does not override Object.GetHashCode()
+#pragma warning restore CS0660 // Type defines operator == or operator != but does not override Object.Equals(object o)
 {
     // Serialized data
+    [SerializeField] Image background;
 
     // Private member data
     BrailleDot[] dots;
@@ -42,6 +48,10 @@ public class BrailleCell : MonoBehaviour
                 dots[i].SetOn(false);
             }
         }
+    }
+    public void SetBackgroundColor(Color color)
+    {
+        background.color = color;
     }
     // Accessors
     public char GetCharacter()
