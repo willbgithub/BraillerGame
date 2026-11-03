@@ -18,13 +18,14 @@ public class BrailleCell : MonoBehaviour
     // Mutators
     public void SetCharacter(char character)
     {
-        //Debug.Log("cell: SetCharacter(" + character + ")");
-        character = char.ToUpper(character);
+        Debug.Log("cell: SetCharacter(" + character + ")");
+        character = char.ToLower(character);
         if (!Braille.ContainsCharacter(character))
         {
             Debug.LogError("ERROR: \"" + character + "\" cannot be represented in Braille!");
             return;
         }
+        Debug.Log("Index: " + Braille.GetIndex(character));
         SetIndex(Braille.GetIndex(character));
     }
     public void SetIndex(int index)

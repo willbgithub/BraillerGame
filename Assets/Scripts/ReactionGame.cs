@@ -1,13 +1,17 @@
 using TMPro;
 using UnityEngine;
-using UnityEngine.Audio;
+using System.Collections.Generic;
 
 public class ReactionGame : MonoBehaviour, IBrailler
 {
     // Data
-    bool prompting = false;
     float roundTimer = 0;
     bool roundTimerCounting = false;
+
+    List<AudioClip> audioQueue = new List<AudioClip>();
+    bool audioQueuePlaying = false;
+    const float DELAY = 0.2f;
+    float delayTimer = 0;
 
     // Serialized Objects
     [SerializeField] Color colorDefault;
@@ -17,15 +21,18 @@ public class ReactionGame : MonoBehaviour, IBrailler
     [SerializeField] BrailleCell inputCell;
     [SerializeField] BrailleCell copyCell;
     [SerializeField] TMP_Text feedback;
+    [SerializeField] TMP_Text inputLetterLabel;
+    [SerializeField] TMP_Text copyLetterLabel;
     [SerializeField] AudioClip audioNewRound;
     [SerializeField] AudioClip audioCorrect;
     [SerializeField] AudioClip audioWrong;
+    [SerializeField] AudioClip[] audioNumberYes;
+    [SerializeField] AudioClip[] audioNumberNo;
     [SerializeField] AudioSource audioSource;
 
     // Game
     public void StartRound(float secDelay)
     {
-        Debug.Log("StartRound(" + secDelay);
         if (secDelay > 0)
         {
             roundTimer = secDelay;
@@ -33,12 +40,50 @@ public class ReactionGame : MonoBehaviour, IBrailler
             return;
         }
         inputCell.SetBackgroundColor(colorDefault);
-        int index = Random.Range(1, 63);
-        copyCell.SetIndex(index);
-        PlaySound(audioNewRound);
-        prompting = true;
+        int index = Random.Range(0, 23);
+        char character = (char)('a' + index);
+        copyCell.SetCharacter(character);
+        copyLetterLabel.text = character.ToString();
         inputCell.SetIndex(0);
+        inputLetterLabel.text = "";
         feedback.text = "COPY!";
+        PlayBrailleAudio();
+    }
+    public void PlayBrailleAudio()
+    {
+        bool[] dots = new bool[6];
+        int index = copyCell.GetIndex();
+        for (int i = 5; i >= 0; i--)
+        {
+            if (index >= (int)Mathf.Pow(2, i))
+            {
+                dots[i] = true;
+                index -= (int)Mathf.Pow(2, i);
+            }
+            else
+            {
+                dots[i] = false;
+            }
+        }
+        for (int i = 0; i < 6; i++)
+        {
+            if (dots[i])
+            {
+                audioQueue.Add(audioNumberYes[i]);
+            }
+            else
+            {
+                audioQueue.Add(audioNumberNo[i]);
+            }
+        }
+        PlayAudioQueue();
+    }
+    public void PlayAudioQueue()
+    {
+        PlaySound(audioQueue[0]);
+        Debug.Log("Playing sound: "  + audioQueue[0]);
+        delayTimer = DELAY;
+        audioQueuePlaying = true;
     }
     public void PlaySound(AudioClip sound)
     {
@@ -49,24 +94,30 @@ public class ReactionGame : MonoBehaviour, IBrailler
     // Input
     public void OnIndexWrite(int index)
     {
-        if (prompting)
+        inputCell.SetIndex(index);
+        if (inputCell.HasCharacter())
         {
-            inputCell.SetIndex(index);
-            if (index == copyCell.GetIndex())
-            {
-                feedback.text = "CORRECT!";
-                inputCell.SetBackgroundColor(colorCorrect);
-                PlaySound(audioCorrect);
-            }
-            else
-            {
-                feedback.text = "WRONG!";
-                inputCell.SetBackgroundColor(colorWrong);
-                PlaySound(audioWrong);
-            }
-            prompting = false;
-            StartRound(1);
+            char character = inputCell.GetCharacter();
+            inputLetterLabel.text = character.ToString();
         }
+        else
+        {
+            inputLetterLabel.text = "Not a character!";
+        }
+        if (index == copyCell.GetIndex())
+        {
+            feedback.text = "CORRECT!";
+            inputCell.SetBackgroundColor(colorCorrect);
+            PlaySound(audioCorrect);
+        }
+        else
+        {
+            feedback.text = "WRONG!";
+            inputCell.SetBackgroundColor(colorWrong);
+            PlaySound(audioWrong);
+        }
+        brailler.SetOutputEnabled(false);
+        StartRound(1);
     }
     public void OnBackspaceDown()
     {
@@ -100,6 +151,29 @@ public class ReactionGame : MonoBehaviour, IBrailler
         {
             roundTimerCounting = false;
             StartRound(0);
+        }
+
+        if (audioQueuePlaying)
+        {
+            if (audioQueue.Count == 0)
+            {
+                audioQueuePlaying = false;
+                brailler.SetOutputEnabled(true);
+            }
+            else if (delayTimer <= 0)
+            {
+                delayTimer = DELAY;
+                audioQueue.RemoveAt(0);
+                if (audioQueue.Count > 0)
+                {
+                    PlaySound(audioQueue[0]);
+                    Debug.Log("Playing sound: " + audioQueue[0]);
+                }
+            }
+            else
+            {
+                delayTimer -= Time.deltaTime;
+            }
         }
     }
 }
