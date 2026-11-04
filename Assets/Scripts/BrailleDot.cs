@@ -8,6 +8,7 @@ public class BrailleDot : MonoBehaviour
 
     // Private member data
     const float OFF_SCALE = 0.15f;
+    const float ON_SCALE = 0.9f;
     BrailleCell parent;
     bool on;
 
@@ -21,7 +22,7 @@ public class BrailleDot : MonoBehaviour
         this.on = on;
         if (on)
         {
-            image.transform.localScale = new Vector3(1, 1, 1);
+            image.transform.localScale = new Vector3(ON_SCALE, ON_SCALE, ON_SCALE);
         }
         else
         {

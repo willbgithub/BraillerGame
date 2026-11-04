@@ -1,0 +1,6 @@
+Reaction Game
+
+- Space replays audio
+- When failing a match, keep the same index. Just repeat the audio
+- Speak letter out loud
+- Keep track of score

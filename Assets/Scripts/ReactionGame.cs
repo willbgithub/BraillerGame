@@ -28,7 +28,7 @@ public class ReactionGame : MonoBehaviour, IBrailler
     [SerializeField] AudioClip audioWrong;
     [SerializeField] AudioClip[] audioNumberYes;
     [SerializeField] AudioClip[] audioNumberNo;
-    [SerializeField] AudioSource audioSource;
+    [SerializeField] AudioSource[] audioPlayer;
 
     // Game
     public void StartRound(float secDelay)
@@ -80,15 +80,14 @@ public class ReactionGame : MonoBehaviour, IBrailler
     }
     public void PlayAudioQueue()
     {
-        PlaySound(audioQueue[0]);
-        Debug.Log("Playing sound: "  + audioQueue[0]);
+        PlaySound(audioQueue[0], 1);
         delayTimer = DELAY;
         audioQueuePlaying = true;
     }
-    public void PlaySound(AudioClip sound)
+    public void PlaySound(AudioClip sound, int channel)
     {
-        audioSource.resource = sound;
-        audioSource.Play();
+        audioPlayer[channel].resource = sound;
+        audioPlayer[channel].Play();
     }
 
     // Input
@@ -108,13 +107,13 @@ public class ReactionGame : MonoBehaviour, IBrailler
         {
             feedback.text = "CORRECT!";
             inputCell.SetBackgroundColor(colorCorrect);
-            PlaySound(audioCorrect);
+            PlaySound(audioCorrect, 0);
         }
         else
         {
             feedback.text = "WRONG!";
             inputCell.SetBackgroundColor(colorWrong);
-            PlaySound(audioWrong);
+            PlaySound(audioWrong, 0);
         }
         brailler.SetOutputEnabled(false);
         StartRound(1);
@@ -166,8 +165,7 @@ public class ReactionGame : MonoBehaviour, IBrailler
                 audioQueue.RemoveAt(0);
                 if (audioQueue.Count > 0)
                 {
-                    PlaySound(audioQueue[0]);
-                    Debug.Log("Playing sound: " + audioQueue[0]);
+                    PlaySound(audioQueue[0], 7 - audioQueue.Count);
                 }
             }
             else
