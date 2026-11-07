@@ -1,7 +1,8 @@
 TODO
+- Speak letter out loud
 - When failing a match, keep the same index. Just repeat the audio
 - Keep track of score
 
 Completed
 - Space replays audio
-- Speak letter out loud
+- Braille dots spoken out loud with voice
