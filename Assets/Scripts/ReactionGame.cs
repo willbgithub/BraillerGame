@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 public class ReactionGame : MonoBehaviour, IBrailler
 {
@@ -27,7 +28,6 @@ public class ReactionGame : MonoBehaviour, IBrailler
     [SerializeField] AudioClip audioCorrect;
     [SerializeField] AudioClip audioWrong;
     [SerializeField] AudioClip[] audioNumberYes;
-    [SerializeField] AudioClip[] audioNumberNo;
     [SerializeField] AudioSource[] audioPlayer;
 
     // Game
@@ -47,12 +47,12 @@ public class ReactionGame : MonoBehaviour, IBrailler
         inputCell.SetIndex(0);
         inputLetterLabel.text = "";
         feedback.text = "COPY!";
-        PlayBrailleAudio();
+        PlayBrailleAudio(copyCell.GetIndex());
     }
-    public void PlayBrailleAudio()
+    public void PlayBrailleAudio(int index)
     {
+        brailler.SetOutputEnabled(false);
         bool[] dots = new bool[6];
-        int index = copyCell.GetIndex();
         for (int i = 5; i >= 0; i--)
         {
             if (index >= (int)Mathf.Pow(2, i))
@@ -71,21 +71,46 @@ public class ReactionGame : MonoBehaviour, IBrailler
             {
                 audioQueue.Add(audioNumberYes[i]);
             }
-            else
-            {
-                audioQueue.Add(audioNumberNo[i]);
-            }
         }
         PlayAudioQueue();
     }
     public void PlayAudioQueue()
     {
-        PlaySound(audioQueue[0], 1);
+        if (audioQueue[0] == audioNumberYes[0])
+        {
+            Debug.Log("1");
+        }
+        else if (audioQueue[0] == audioNumberYes[1])
+        {
+            Debug.Log("2");
+        }
+        else if (audioQueue[0] == audioNumberYes[2])
+        {
+            Debug.Log("3");
+        }
+        else if (audioQueue[0] == audioNumberYes[3])
+        {
+            Debug.Log("4");
+        }
+        else if (audioQueue[0] == audioNumberYes[4])
+        {
+            Debug.Log("5");
+        }
+        else if (audioQueue[0] == audioNumberYes[5])
+        {
+            Debug.Log("6");
+        }
+        PlaySound(audioQueue[0]);
         delayTimer = DELAY;
         audioQueuePlaying = true;
     }
-    public void PlaySound(AudioClip sound, int channel)
+    public void PlaySound(AudioClip sound)
     {
+        int channel = 0;
+        while (audioPlayer[channel].isPlaying)
+        {
+            channel++;
+        }
         audioPlayer[channel].resource = sound;
         audioPlayer[channel].Play();
     }
@@ -93,6 +118,7 @@ public class ReactionGame : MonoBehaviour, IBrailler
     // Input
     public void OnIndexWrite(int index)
     {
+        brailler.SetOutputEnabled(false);
         inputCell.SetIndex(index);
         if (inputCell.HasCharacter())
         {
@@ -107,15 +133,14 @@ public class ReactionGame : MonoBehaviour, IBrailler
         {
             feedback.text = "CORRECT!";
             inputCell.SetBackgroundColor(colorCorrect);
-            PlaySound(audioCorrect, 0);
+            PlaySound(audioCorrect);
         }
         else
         {
             feedback.text = "WRONG!";
             inputCell.SetBackgroundColor(colorWrong);
-            PlaySound(audioWrong, 0);
+            PlaySound(audioWrong);
         }
-        brailler.SetOutputEnabled(false);
         StartRound(1);
     }
     public void OnBackspaceDown()
@@ -124,7 +149,11 @@ public class ReactionGame : MonoBehaviour, IBrailler
     }
     public void OnSpaceDown()
     {
-
+        if (audioQueuePlaying)
+        {
+            return;
+        }
+        PlayBrailleAudio(copyCell.GetIndex());
     }
 
     // Other
@@ -165,7 +194,31 @@ public class ReactionGame : MonoBehaviour, IBrailler
                 audioQueue.RemoveAt(0);
                 if (audioQueue.Count > 0)
                 {
-                    PlaySound(audioQueue[0], 7 - audioQueue.Count);
+                    PlaySound(audioQueue[0]);
+                    if (audioQueue[0] == audioNumberYes[0])
+                    {
+                        Debug.Log("1");
+                    }
+                    else if (audioQueue[0] == audioNumberYes[1])
+                    {
+                        Debug.Log("2");
+                    }
+                    else if (audioQueue[0] == audioNumberYes[2])
+                    {
+                        Debug.Log("3");
+                    }
+                    else if (audioQueue[0] == audioNumberYes[3])
+                    {
+                        Debug.Log("4");
+                    }
+                    else if (audioQueue[0] == audioNumberYes[4])
+                    {
+                        Debug.Log("5");
+                    }
+                    else if (audioQueue[0] == audioNumberYes[5])
+                    {
+                        Debug.Log("6");
+                    }
                 }
             }
             else
