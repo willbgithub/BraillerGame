@@ -4,23 +4,21 @@ using UnityEngine.UI;
 
 public class Key : MonoBehaviour
 {
-    // Serialized objects
+    // Custom Parameters
     [SerializeField] Color defaultColor;
     [SerializeField] Color pressedColor;
+    // Serialized objects
     [SerializeField] Image background;
     [SerializeField] TMP_Text label;
-
-    // Private member data
-    //bool pressed;
+    [SerializeField] AudioSource audioPlayer;
 
     public void OnDown()
     {
-        //pressed = true;
         background.color = pressedColor;
+        audioPlayer.Play();
     }
     public void OnUp()
     {
-        //pressed = false;
         background.color = defaultColor;
     }
     public void SetLabel(string text)

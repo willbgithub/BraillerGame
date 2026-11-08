@@ -1,8 +1,10 @@
 TODO
-- Speak letter out loud
-- When failing a match, keep the same index. Just repeat the audio
 - Keep track of score
+- Hideable copy cell
+- Accessible controls
 
 Completed
+- Speak letter out loud
+- When failing a match, keep the same index. Just repeat the audio
 - Space replays audio
 - Braille dots spoken out loud with voice

@@ -8,7 +8,6 @@ public class Brailler : MonoBehaviour
 {
     // Data
     IBrailler parent;
-    [SerializeField] float submitDelay = 0.025f;
     float timer;
     bool counting;
     bool inputEnabled;
@@ -24,6 +23,8 @@ public class Brailler : MonoBehaviour
     InputAction keyBackspaceInput;
     InputAction keySpaceInput;
 
+    // Custom Parameters
+    [SerializeField] float submitDelay = 0.025f;
     // Serialized Objects
     [SerializeField] GameObject greyOut;
     [SerializeField] Key[] keys;
