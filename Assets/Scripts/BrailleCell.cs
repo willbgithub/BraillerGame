@@ -54,6 +54,23 @@ public class BrailleCell : MonoBehaviour
     {
         background.color = color;
     }
+    public void Hide(bool hide)
+    {
+        if (hide)
+        {
+            for (int i = 0; i < 6; i++)
+            {
+                dots[i].GetComponent<Image>().color = new Color(0, 0, 0, 0);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < 6; i++)
+            {
+                dots[i].GetComponent<Image>().color = new Color(0, 0, 0, 1);
+            }
+        }
+    }
     // Accessors
     public char GetCharacter()
     {

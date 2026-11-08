@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.UI;
 
-public class ReactionGame : MonoBehaviour, IBrailler
+public class ReactionGame : MonoBehaviour, IBrailler, IToggle
 {
     // Data
     bool letterMode;
+    int score = 0;
 
     // Timers
     float startRoundTimer = 0;
@@ -28,13 +29,15 @@ public class ReactionGame : MonoBehaviour, IBrailler
     [SerializeField] Color colorCorrect;
     [SerializeField] Color colorWrong;
     // Serialized Objects
-    [SerializeField] Toggle letterModeToggle;
+    [SerializeField] Toggle toggleLetterMode;
+    [SerializeField] Toggle toggleShowCopyCell;
     [SerializeField] Brailler brailler;
-    [SerializeField] BrailleCell inputCell;
-    [SerializeField] BrailleCell copyCell;
-    [SerializeField] TMP_Text feedback;
-    [SerializeField] TMP_Text inputLetterLabel;
-    [SerializeField] TMP_Text copyLetterLabel;
+    [SerializeField] BrailleCell brailleCellInput;
+    [SerializeField] BrailleCell brailleCellCopy;
+    [SerializeField] TMP_Text labelFeedback;
+    [SerializeField] TMP_Text labelScore;
+    [SerializeField] TMP_Text labelInputLetter;
+    [SerializeField] TMP_Text labelCopyLetter;
     [SerializeField] AudioClip audioNewRound;
     [SerializeField] AudioClip audioCorrect;
     [SerializeField] AudioClip audioWrong;
@@ -43,6 +46,22 @@ public class ReactionGame : MonoBehaviour, IBrailler
     [SerializeField] AudioSource[] audioPlayer;
 
     // Game
+    public void OnValueChanged(Toggle toggle, bool value)
+    {
+        if (toggle == toggleLetterMode)
+        {
+            letterMode = value;
+        }
+        else if (toggle == toggleShowCopyCell)
+        {
+            brailleCellCopy.Hide(!value);
+        }
+    }
+    public void AddScore()
+    {
+        score++;
+        labelScore.text = "Score: " + score;
+    }
     public void SetLetterMode(bool letterMode)
     {
         this.letterMode = letterMode;
@@ -55,14 +74,14 @@ public class ReactionGame : MonoBehaviour, IBrailler
             startRoundCounting = true;
             return;
         }
-        inputCell.SetBackgroundColor(colorDefault);
+        brailleCellInput.SetBackgroundColor(colorDefault);
         char character = (char)('a' + Random.Range(0, 23));
-        copyCell.SetCharacter(character);
-        copyLetterLabel.text = character.ToString();
-        inputCell.SetIndex(0);
-        inputLetterLabel.text = "";
-        feedback.text = "COPY!";
-        PlayBrailleAudio(copyCell.GetIndex());
+        brailleCellCopy.SetCharacter(character);
+        labelCopyLetter.text = character.ToString();
+        brailleCellInput.SetIndex(0);
+        labelInputLetter.text = "";
+        labelFeedback.text = "COPY!";
+        PlayBrailleAudio(brailleCellCopy.GetIndex());
     }
     public void PlayBrailleAudio(int index, float delay = 0)
     {
@@ -76,7 +95,7 @@ public class ReactionGame : MonoBehaviour, IBrailler
         // Character
         if (letterMode)
         {
-            PlaySound(audioAlphabet[copyCell.GetCharacter() - 'a']);
+            PlaySound(audioAlphabet[brailleCellCopy.GetCharacter() - 'a']);
             brailler.SetOutputEnabled(true);
             return;
         }
@@ -149,29 +168,30 @@ public class ReactionGame : MonoBehaviour, IBrailler
     public void OnIndexWrite(int index)
     {
         brailler.SetOutputEnabled(false);
-        inputCell.SetIndex(index);
-        if (inputCell.HasCharacter())
+        brailleCellInput.SetIndex(index);
+        if (brailleCellInput.HasCharacter())
         {
-            char character = inputCell.GetCharacter();
-            inputLetterLabel.text = character.ToString();
+            char character = brailleCellInput.GetCharacter();
+            labelInputLetter.text = character.ToString();
         }
         else
         {
-            inputLetterLabel.text = "Not a character!";
+            labelInputLetter.text = "Not a character!";
         }
-        if (index == copyCell.GetIndex())
+        if (index == brailleCellCopy.GetIndex())
         {
-            feedback.text = "CORRECT!";
-            inputCell.SetBackgroundColor(colorCorrect);
+            labelFeedback.text = "CORRECT!";
+            brailleCellInput.SetBackgroundColor(colorCorrect);
             PlaySound(audioCorrect);
+            AddScore();
             StartRound(1);
         }
         else
         {
-            feedback.text = "WRONG!";
-            inputCell.SetBackgroundColor(colorWrong);
+            labelFeedback.text = "WRONG!";
+            brailleCellInput.SetBackgroundColor(colorWrong);
             PlaySound(audioWrong);
-            PlayBrailleAudio(copyCell.GetIndex(), 1);
+            PlayBrailleAudio(brailleCellCopy.GetIndex(), 1);
         }
         
     }
@@ -185,19 +205,20 @@ public class ReactionGame : MonoBehaviour, IBrailler
         {
             return;
         }
-        PlayBrailleAudio(copyCell.GetIndex());
+        PlayBrailleAudio(brailleCellCopy.GetIndex());
     }
 
     // Other
     void Awake()
     {
         brailler.SetParent(this);
+        toggleLetterMode.SetParent(this);
+        toggleShowCopyCell.SetParent(this);
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        letterMode = letterModeToggle.isOn;
-        copyCell.SetBackgroundColor(colorDefault);
+        brailleCellCopy.SetBackgroundColor(colorDefault);
         StartRound(0);
     }
 

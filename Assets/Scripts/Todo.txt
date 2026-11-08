@@ -1,9 +1,9 @@
 TODO
-- Keep track of score
-- Hideable copy cell
 - Accessible controls
 
 Completed
+- Hideable copy cell
+- Keep track of score
 - Speak letter out loud
 - When failing a match, keep the same index. Just repeat the audio
 - Space replays audio
