@@ -4,10 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.UI;
 
-public class ReactionGame : MonoBehaviour, IBrailler, IToggle
+public class ReactionGame : MonoBehaviour, IBrailler
 {
     // Data
-    bool letterMode;
     int score = 0;
 
     // Timers
@@ -46,25 +45,14 @@ public class ReactionGame : MonoBehaviour, IBrailler, IToggle
     [SerializeField] AudioSource[] audioPlayer;
 
     // Game
-    public void OnValueChanged(Toggle toggle, bool value)
+    public void ShowCopyCell(bool value)
     {
-        if (toggle == toggleLetterMode)
-        {
-            letterMode = value;
-        }
-        else if (toggle == toggleShowCopyCell)
-        {
-            brailleCellCopy.Hide(!value);
-        }
+        brailleCellCopy.Hide(!value);
     }
     public void AddScore()
     {
         score++;
         labelScore.text = "Score: " + score;
-    }
-    public void SetLetterMode(bool letterMode)
-    {
-        this.letterMode = letterMode;
     }
     public void StartRound(float secDelay)
     {
@@ -93,7 +81,7 @@ public class ReactionGame : MonoBehaviour, IBrailler, IToggle
             return;
         }
         // Character
-        if (letterMode)
+        if (toggleLetterMode.IsOn)
         {
             PlaySound(audioAlphabet[brailleCellCopy.GetCharacter() - 'a']);
             brailler.SetOutputEnabled(true);
@@ -212,13 +200,12 @@ public class ReactionGame : MonoBehaviour, IBrailler, IToggle
     void Awake()
     {
         brailler.SetParent(this);
-        toggleLetterMode.SetParent(this);
-        toggleShowCopyCell.SetParent(this);
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         brailleCellCopy.SetBackgroundColor(colorDefault);
+        ShowCopyCell(toggleShowCopyCell.IsOn);
         StartRound(0);
     }
 

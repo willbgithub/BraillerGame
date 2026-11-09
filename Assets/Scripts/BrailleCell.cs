@@ -60,14 +60,14 @@ public class BrailleCell : MonoBehaviour
         {
             for (int i = 0; i < 6; i++)
             {
-                dots[i].GetComponent<Image>().color = new Color(0, 0, 0, 0);
+                dots[i].GetComponent<Image>().enabled = false;
             }
         }
         else
         {
             for (int i = 0; i < 6; i++)
             {
-                dots[i].GetComponent<Image>().color = new Color(0, 0, 0, 1);
+                dots[i].GetComponent<Image>().enabled = true;
             }
         }
     }

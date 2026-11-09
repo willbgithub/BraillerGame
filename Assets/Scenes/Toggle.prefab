@@ -340,6 +340,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Toggle
   isOn: 1
+  OnValueChange:
+    m_PersistentCalls:
+      m_Calls: []
   checkmark: {fileID: 457019155789004937}
 --- !u!114 &4108080697646867255
 MonoBehaviour:

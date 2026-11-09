@@ -1,26 +1,28 @@
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Toggle : MonoBehaviour
 {
-    IToggle parent;
     [SerializeField] bool isOn;
-    [SerializeField] GameObject checkmark;
-    public void SetParent(IToggle parent)
+    public bool IsOn
     {
-        this.parent = parent;
+        get => isOn;
+        set
+        { 
+            isOn = value;
+            checkmark.SetActive(value);
+            OnValueChanged.Invoke(value);
+        }
     }
+    [SerializeField] GameObject checkmark;
+    [SerializeField] UnityEvent<bool> OnValueChanged;
     private void OnValidate()
     {
         checkmark.SetActive(isOn);
-        if (parent.IsUnityNull())
-            return;
-        parent.OnValueChanged(this, isOn);
     }
     public void OnPointerClick()
     {
-        isOn = !isOn;
-        parent.OnValueChanged(this, isOn);
-        checkmark.SetActive(isOn);
+        IsOn = !isOn;
     }
 }
