@@ -1,10 +1,22 @@
-TODO
-- Accessible controls
+CAVE GAME
+	- You are walking through a cave trying to escape. There's fire chasing you.
+	- You are asked to type a braille character by its letter being spoken to you. If you get it wrong, you must wait for a second before trying again.
+	- If you get it right, you progress forwards.
+	- Pressing F1 will show the correct braille character on screen, as well as play the index audibly.
+	- After getting a letter correct three times, a sound will play, indicating that it will no longer provide assistance when you use F1.
+	- If you solve the character without pressing F1, it counts as getting it correct twice.
+	- After getting every letter correct at least four times, you escape.
 
-Completed
-- Hideable copy cell
-- Keep track of score
-- Speak letter out loud
-- When failing a match, keep the same index. Just repeat the audio
-- Space replays audio
-- Braille dots spoken out loud with voice
+COPY GAME
+	TODO
+		- Implement TTS
+		- Accessible controls
+	Completed
+		- Update how timers are handled
+		- Do not repeat same character if you got it correct
+		- Hideable copy cell
+		- Keep track of score
+		- Speak letter out loud
+		- When failing a match, keep the same index. Just repeat the audio
+		- Space replays audio
+		- Braille dots spoken out loud with voice

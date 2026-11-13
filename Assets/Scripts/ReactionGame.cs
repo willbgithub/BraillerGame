@@ -1,21 +1,16 @@
-using TMPro;
-using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
+using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class ReactionGame : MonoBehaviour, IBrailler
 {
     // Data
     int score = 0;
-
-    // Timers
-    float startRoundTimer = 0;
-    bool startRoundCounting = false;
-
-    float playBrailleAudioTimer = 0;
-    int playBrailleAudioIndex = 0;
-    bool playBrailleAudioCounting = false;
+    InputAction keyGuide;
 
     // Audio Queue
     List<AudioClip> audioQueue = new List<AudioClip>();
@@ -28,6 +23,7 @@ public class ReactionGame : MonoBehaviour, IBrailler
     [SerializeField] Color colorCorrect;
     [SerializeField] Color colorWrong;
     // Serialized Objects
+    [SerializeField] GameObject guide;
     [SerializeField] Toggle toggleLetterMode;
     [SerializeField] Toggle toggleShowCopyCell;
     [SerializeField] Brailler brailler;
@@ -45,6 +41,14 @@ public class ReactionGame : MonoBehaviour, IBrailler
     [SerializeField] AudioSource[] audioPlayer;
 
     // Game
+    public void SetGuide(bool guide)
+    {
+        this.guide.SetActive(guide);
+    }
+    public void ToggleGuide()
+    {
+        SetGuide(!guide.activeSelf);
+    }
     public void ShowCopyCell(bool value)
     {
         brailleCellCopy.Hide(!value);
@@ -54,38 +58,35 @@ public class ReactionGame : MonoBehaviour, IBrailler
         score++;
         labelScore.text = "Score: " + score;
     }
-    public void StartRound(float secDelay)
+    IEnumerator StartRound(float secDelay = 0)
     {
-        if (secDelay > 0)
-        {
-            startRoundTimer = secDelay;
-            startRoundCounting = true;
-            return;
-        }
+        Debug.Log("StartRound " + secDelay);
+        yield return new WaitForSeconds(secDelay);
+        Debug.Log("StartRound bypassed");
+
         brailleCellInput.SetBackgroundColor(colorDefault);
         char character = (char)('a' + Random.Range(0, 23));
+        while (character == brailleCellCopy.GetCharacter())
+        {
+            character = (char)('a' + Random.Range(0, 23));
+        }
         brailleCellCopy.SetCharacter(character);
         labelCopyLetter.text = character.ToString();
         brailleCellInput.SetIndex(0);
         labelInputLetter.text = "";
         labelFeedback.text = "COPY!";
-        PlayBrailleAudio(brailleCellCopy.GetIndex());
+        StartCoroutine(PlayBrailleAudio(brailleCellCopy.GetIndex()));
     }
-    public void PlayBrailleAudio(int index, float delay = 0)
+    IEnumerator PlayBrailleAudio(int index, float secDelay = 0)
     {
-        if (delay > 0)
-        {
-            playBrailleAudioTimer = delay;
-            playBrailleAudioCounting = true;
-            playBrailleAudioIndex = index;
-            return;
-        }
+        yield return new WaitForSeconds(secDelay);
+
         // Character
         if (toggleLetterMode.IsOn)
         {
             PlaySound(audioAlphabet[brailleCellCopy.GetCharacter() - 'a']);
             brailler.SetOutputEnabled(true);
-            return;
+            yield break;
         }
         brailler.SetOutputEnabled(false);
         // Dots
@@ -172,14 +173,14 @@ public class ReactionGame : MonoBehaviour, IBrailler
             brailleCellInput.SetBackgroundColor(colorCorrect);
             PlaySound(audioCorrect);
             AddScore();
-            StartRound(1);
+            StartCoroutine(StartRound(1));
         }
         else
         {
             labelFeedback.text = "WRONG!";
             brailleCellInput.SetBackgroundColor(colorWrong);
             PlaySound(audioWrong);
-            PlayBrailleAudio(brailleCellCopy.GetIndex(), 1);
+            StartCoroutine(PlayBrailleAudio(brailleCellCopy.GetIndex(), 1));
         }
         
     }
@@ -193,7 +194,7 @@ public class ReactionGame : MonoBehaviour, IBrailler
         {
             return;
         }
-        PlayBrailleAudio(brailleCellCopy.GetIndex());
+        StartCoroutine(PlayBrailleAudio(brailleCellCopy.GetIndex()));
     }
 
     // Other
@@ -204,34 +205,20 @@ public class ReactionGame : MonoBehaviour, IBrailler
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        keyGuide = InputSystem.actions.FindAction("Guide");
+        SetGuide(false);
         brailleCellCopy.SetBackgroundColor(colorDefault);
         ShowCopyCell(toggleShowCopyCell.IsOn);
-        StartRound(0);
+        StartCoroutine(StartRound(0));
     }
 
     // Update is called once per frame
     void Update()
     {
-        // StartRound
-        if (startRoundTimer > 0)
+        // Guide
+        if (keyGuide.WasPressedThisFrame())
         {
-            startRoundTimer -= Time.deltaTime;
-        }
-        else if (startRoundCounting && startRoundTimer <= 0)
-        {
-            startRoundCounting = false;
-            StartRound(0);
-        }
-
-        // PlayBrailleAudio
-        if (playBrailleAudioTimer > 0)
-        {
-            playBrailleAudioTimer -= Time.deltaTime;
-        }
-        else if (playBrailleAudioCounting && playBrailleAudioTimer <= 0)
-        {
-            playBrailleAudioCounting = false;
-            PlayBrailleAudio(playBrailleAudioIndex, 0);
+            ToggleGuide();
         }
 
         // Audio Queue
