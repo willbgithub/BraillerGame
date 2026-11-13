@@ -9,7 +9,7 @@ CAVE GAME
 
 COPY GAME
 	TODO
-		- Implement TTS
+		- Main Menu
 		- Accessible controls
 	Completed
 		- Update how timers are handled
