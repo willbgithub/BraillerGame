@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -48,6 +47,7 @@ public class ReactionGame : MonoBehaviour, IBrailler
     [SerializeField] AudioClip[] audioAlphabet;
     [SerializeField] AudioSource[] audioPlayer;
 
+
     public void OnBackButtonPress()
     {
         SceneManager.LoadScene("MainMenu");
@@ -72,9 +72,10 @@ public class ReactionGame : MonoBehaviour, IBrailler
     }
     IEnumerator StartRound(float secDelay = 0)
     {
-        Debug.Log("StartRound " + secDelay);
-        yield return new WaitForSeconds(secDelay);
-        Debug.Log("StartRound bypassed");
+        if (secDelay > 0)
+        {
+            yield return new WaitForSeconds(secDelay);
+        }
 
         brailleCellInput.SetBackgroundColor(colorDefault);
         char character = (char)('a' + Random.Range(0, 23));
@@ -91,7 +92,10 @@ public class ReactionGame : MonoBehaviour, IBrailler
     }
     IEnumerator PlayBrailleAudio(int index, float secDelay = 0)
     {
-        yield return new WaitForSeconds(secDelay);
+        if (secDelay > 0)
+        {
+            yield return new WaitForSeconds(secDelay);
+        }
 
         // Character
         if (toggleLetterMode.IsOn)
@@ -236,24 +240,20 @@ public class ReactionGame : MonoBehaviour, IBrailler
     void Awake()
     {
         brailler.SetParent(this);
-    }
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
         keyUpArrow = InputSystem.actions.FindAction("UpArrow");
         keyDownArrow = InputSystem.actions.FindAction("DownArrow");
         keyEnter = InputSystem.actions.FindAction("Enter");
-
-        Select(0);
-
         keyGuide = InputSystem.actions.FindAction("Guide");
+    }
+    void Start()
+    {
+        Select(0);
         SetGuide(false);
         brailleCellCopy.SetBackgroundColor(colorDefault);
         ShowCopyCell(toggleShowCopyCell.IsOn);
         StartCoroutine(StartRound(0));
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (keyUpArrow.WasPressedThisFrame())

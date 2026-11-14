@@ -56,19 +56,19 @@ public class BrailleCell : MonoBehaviour
     }
     public void Hide(bool hide)
     {
-        if (hide)
+        for (int i = 0; i < 6; i++)
         {
-            for (int i = 0; i < 6; i++)
+            if (dots[i] == null)
             {
-                dots[i].GetComponent<Image>().enabled = false;
+                Debug.LogError($"Dot {i} is missing!");
+                continue;
             }
-        }
-        else
-        {
-            for (int i = 0; i < 6; i++)
+            if (dots[i].GetComponent<Image>() == null)
             {
-                dots[i].GetComponent<Image>().enabled = true;
+                Debug.LogError($"Dot {i} has no image!");
+                continue;
             }
+            dots[i].GetComponent<Image>().enabled = !hide;
         }
     }
     // Accessors
@@ -93,9 +93,8 @@ public class BrailleCell : MonoBehaviour
         return cell1.index != cell2.index;
     }
     // Other
-    void Start()
+    void Awake()
     {
-        started = true;
         dots = new BrailleDot[6];
         for (int i = 0; i < 6; i++)
         {
@@ -103,6 +102,10 @@ public class BrailleCell : MonoBehaviour
             dots[i].SetParent(this);
             dots[i].SetOn(false);
         }
+    }
+    void Start()
+    {
+        started = true;
         SetIndex(index);
     }
 }
