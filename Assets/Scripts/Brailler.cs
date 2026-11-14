@@ -98,17 +98,6 @@ public class Brailler : MonoBehaviour
     {
         keySpace.OnUp();
     }
-    
-    static string InputToString(InputAction action)
-    {
-        string match = Regex.Match(action.bindings[0].path, "/(.+)").Groups[1].Value;
-        if (match == "semicolon")
-        {
-            return ";";
-        }
-        char character = char.ToUpper(match[0]);
-        return character + match.Substring(1);
-    }
     void Awake()
     {
         key0Input = InputSystem.actions.FindAction("Key0");
@@ -133,14 +122,6 @@ public class Brailler : MonoBehaviour
         };
         counting = false;
         timer = 0;
-        keys[0].SetLabel(InputToString(key0Input));
-        keys[1].SetLabel(InputToString(key1Input));
-        keys[2].SetLabel(InputToString(key2Input));
-        keys[3].SetLabel(InputToString(key3Input));
-        keys[4].SetLabel(InputToString(key4Input));
-        keys[5].SetLabel(InputToString(key5Input));
-        keySpace.SetLabel(InputToString(keySpaceInput));
-        keyBackspace.SetLabel(InputToString(keyBackspaceInput));
         SetInputEnabled(true);
         SetOutputEnabled(true);
     }

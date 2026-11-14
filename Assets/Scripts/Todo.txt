@@ -9,9 +9,11 @@ CAVE GAME
 
 COPY GAME
 	TODO
-		- Main Menu
-		- Accessible controls
+		- Narrator mode
+		- Main menu buttons remember where they were when you go back
 	Completed
+		- Accessible controls
+		- Main Menu
 		- Update how timers are handled
 		- Do not repeat same character if you got it correct
 		- Hideable copy cell

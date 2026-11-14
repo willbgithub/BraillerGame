@@ -1,15 +1,29 @@
-using UnityEngine;
-using UnityEngine.UI;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor.Experimental.GraphView;
+using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Game : MonoBehaviour, IBrailler
 {
+    public void OnBackButtonPress()
+    {
+        SceneManager.LoadScene("MainMenu");
+    }
+
     // Data
+    [SerializeField] GameObject[] selectables;
+    int selectedIndex;
+
     int scrollToBottom = 0;
         
     InputAction keyGuide;
+
+    InputAction keyUpArrow;
+    InputAction keyDownArrow;
+    InputAction keyEnter;
 
     // Serialized objects
     [SerializeField] Brailler brailler;
@@ -17,13 +31,19 @@ public class Game : MonoBehaviour, IBrailler
     [SerializeField] Transform paperContent;
     [SerializeField] GameObject guide;
     [SerializeField] ScrollRect scrollView;
+    [SerializeField] ScrollRect textScrollView;
     [SerializeField] TMP_Text textLabel;
 
     void Start()
     {
+        keyUpArrow = InputSystem.actions.FindAction("UpArrow");
+        keyDownArrow = InputSystem.actions.FindAction("DownArrow");
+        keyEnter = InputSystem.actions.FindAction("Enter");
+        keyGuide = InputSystem.actions.FindAction("Guide");
+        Select(0);
+
         SetGuide(false);
         textLabel.text = "";
-        keyGuide = InputSystem.actions.FindAction("Guide");
     }
     void Awake()
     {
@@ -79,6 +99,25 @@ public class Game : MonoBehaviour, IBrailler
         }
     }
 
+    public void Select(int index)
+    {
+        GameObject selected = selectables[selectedIndex];
+        selected.transform.GetChild(0).gameObject.SetActive(false);
+        selectedIndex = index;
+        selected = selectables[selectedIndex];
+        selected.transform.GetChild(0).gameObject.SetActive(true);
+    }
+    public void OnEnterDown()
+    {
+        if (selectedIndex == 0)
+        {
+            OnBackButtonPress();
+        }
+        else if (selectedIndex == 1)
+        {
+            OnClearButtonPress();
+        }
+    }
 
     void Update()
     {
@@ -86,10 +125,29 @@ public class Game : MonoBehaviour, IBrailler
         {
             ToggleGuide();
         }
+        if (keyUpArrow.WasPressedThisFrame())
+        {
+            if (selectedIndex > 0)
+            {
+                Select(selectedIndex - 1);
+            }
+        }
+        if (keyDownArrow.WasPressedThisFrame())
+        {
+            if (selectedIndex < selectables.Length - 1)
+            {
+                Select(selectedIndex + 1);
+            }
+        }
+        if (keyEnter.WasPressedThisFrame())
+        {
+            OnEnterDown();
+        }
         if (scrollToBottom >= 1)
         {
             scrollToBottom--;
             scrollView.verticalScrollbar.value = 0;
+            textScrollView.verticalScrollbar.value = 0;
         }
     }
 }

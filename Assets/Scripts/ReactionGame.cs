@@ -4,6 +4,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class ReactionGame : MonoBehaviour, IBrailler
@@ -11,6 +12,13 @@ public class ReactionGame : MonoBehaviour, IBrailler
     // Data
     int score = 0;
     InputAction keyGuide;
+
+    InputAction keyUpArrow;
+    InputAction keyDownArrow;
+    InputAction keyEnter;
+
+    [SerializeField] GameObject[] selectables;
+    int selectedIndex;
 
     // Audio Queue
     List<AudioClip> audioQueue = new List<AudioClip>();
@@ -40,6 +48,10 @@ public class ReactionGame : MonoBehaviour, IBrailler
     [SerializeField] AudioClip[] audioAlphabet;
     [SerializeField] AudioSource[] audioPlayer;
 
+    public void OnBackButtonPress()
+    {
+        SceneManager.LoadScene("MainMenu");
+    }
     // Game
     public void SetGuide(bool guide)
     {
@@ -196,6 +208,29 @@ public class ReactionGame : MonoBehaviour, IBrailler
         }
         StartCoroutine(PlayBrailleAudio(brailleCellCopy.GetIndex()));
     }
+    public void Select(int index)
+    {
+        GameObject selected = selectables[selectedIndex];
+        selected.transform.GetChild(0).gameObject.SetActive(false);
+        selectedIndex = index;
+        selected = selectables[selectedIndex];
+        selected.transform.GetChild(0).gameObject.SetActive(true);
+    }
+    public void OnEnterDown()
+    {
+        if (selectedIndex == 0)
+        {
+            OnBackButtonPress();
+        }
+        else if (selectedIndex == 1)
+        {
+            toggleLetterMode.IsOn = !toggleLetterMode.IsOn;
+        }
+        else if (selectedIndex == 2)
+        {
+            toggleShowCopyCell.IsOn = !toggleShowCopyCell.IsOn;
+        }
+    }
 
     // Other
     void Awake()
@@ -205,6 +240,12 @@ public class ReactionGame : MonoBehaviour, IBrailler
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        keyUpArrow = InputSystem.actions.FindAction("UpArrow");
+        keyDownArrow = InputSystem.actions.FindAction("DownArrow");
+        keyEnter = InputSystem.actions.FindAction("Enter");
+
+        Select(0);
+
         keyGuide = InputSystem.actions.FindAction("Guide");
         SetGuide(false);
         brailleCellCopy.SetBackgroundColor(colorDefault);
@@ -215,6 +256,25 @@ public class ReactionGame : MonoBehaviour, IBrailler
     // Update is called once per frame
     void Update()
     {
+        if (keyUpArrow.WasPressedThisFrame())
+        {
+            if (selectedIndex > 0)
+            {
+                Select(selectedIndex - 1);
+            }
+        }
+        if (keyDownArrow.WasPressedThisFrame())
+        {
+            if (selectedIndex < selectables.Length - 1)
+            {
+                Select(selectedIndex + 1);
+            }
+        }
+        if (keyEnter.WasPressedThisFrame())
+        {
+            OnEnterDown();
+        }
+
         // Guide
         if (keyGuide.WasPressedThisFrame())
         {
