@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -23,6 +24,10 @@ public class MainMenu : MonoBehaviour
     {
         SceneManager.LoadScene("ReactionGame");
     }
+    public void OnQuitButtonPress()
+    {
+        Application.Quit();
+    }
     public void Select(int index)
     {
         GameObject selected = selectables[selectedIndex];
@@ -44,6 +49,10 @@ public class MainMenu : MonoBehaviour
         else if (selectedIndex == 2)
         {
             OnCopyGameButtonPress();
+        }
+        else if (selectedIndex == 3)
+        {
+            OnQuitButtonPress();
         }
     }
     void Start()

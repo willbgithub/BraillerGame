@@ -10,6 +10,7 @@ public class ReactionGame : MonoBehaviour, IBrailler
 {
     // Data
     int score = 0;
+    int totalWrites = 0;
     InputAction keyGuide;
 
     InputAction keyUpArrow;
@@ -65,10 +66,14 @@ public class ReactionGame : MonoBehaviour, IBrailler
     {
         brailleCellCopy.Hide(!value);
     }
-    public void AddScore()
+    public void Score(bool scored)
     {
-        score++;
-        labelScore.text = "Score: " + score;
+        totalWrites++;
+        if (scored)
+        {
+            score++;
+        }
+        labelScore.text = $"Score: {(int)(100f*score/totalWrites)}%";
     }
     IEnumerator StartRound(float secDelay = 0)
     {
@@ -78,10 +83,10 @@ public class ReactionGame : MonoBehaviour, IBrailler
         }
 
         brailleCellInput.SetBackgroundColor(colorDefault);
-        char character = (char)('a' + Random.Range(0, 23));
+        char character = (char)('a' + Random.Range(0, 25));
         while (character == brailleCellCopy.GetCharacter())
         {
-            character = (char)('a' + Random.Range(0, 23));
+            character = (char)('a' + Random.Range(0, 25));
         }
         brailleCellCopy.SetCharacter(character);
         labelCopyLetter.text = character.ToString();
@@ -188,7 +193,7 @@ public class ReactionGame : MonoBehaviour, IBrailler
             labelFeedback.text = "CORRECT!";
             brailleCellInput.SetBackgroundColor(colorCorrect);
             PlaySound(audioCorrect);
-            AddScore();
+            Score(true);
             StartCoroutine(StartRound(1));
         }
         else
@@ -196,6 +201,7 @@ public class ReactionGame : MonoBehaviour, IBrailler
             labelFeedback.text = "WRONG!";
             brailleCellInput.SetBackgroundColor(colorWrong);
             PlaySound(audioWrong);
+            Score(false);
             StartCoroutine(PlayBrailleAudio(brailleCellCopy.GetIndex(), 1));
         }
         

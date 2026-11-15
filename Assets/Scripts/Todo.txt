@@ -9,9 +9,26 @@ CAVE GAME
 
 COPY GAME
 	TODO
+
+		- esc menu
+		
+		- adjustable volumes
+
 		- Narrator mode
+			- ask for setting when you open the game
+			- remember setting
+			- toggle with N
+			- ctrl mutes
+			- adjustable speed
+
 		- Main menu buttons remember where they were when you go back
+
 	Completed
+		- quit game
+		- percentage score
+		- redid tutorial
+		- fixed y and z
+		- Added exclamation mark
 		- Accessible controls
 		- Main Menu
 		- Update how timers are handled
