@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class Game : MonoBehaviour, IBrailler
 {
+    public GameManager gameManager;
+
     public void OnBackButtonPress()
     {
         SceneManager.LoadScene("MainMenu");
@@ -22,12 +24,14 @@ public class Game : MonoBehaviour, IBrailler
     InputAction keyUpArrow;
     InputAction keyDownArrow;
     InputAction keyEnter;
+    InputAction keyEsc;
 
     // Serialized objects
     [SerializeField] Brailler brailler;
     [SerializeField] BrailleCell brailleCellPrefab;
     [SerializeField] Transform paperContent;
     [SerializeField] GameObject guide;
+    [SerializeField] GameObject escMenu;
     [SerializeField] ScrollRect scrollView;
     [SerializeField] ScrollRect textScrollView;
     [SerializeField] TMP_Text textLabel;
@@ -38,6 +42,7 @@ public class Game : MonoBehaviour, IBrailler
         keyDownArrow = InputSystem.actions.FindAction("DownArrow");
         keyEnter = InputSystem.actions.FindAction("Enter");
         keyGuide = InputSystem.actions.FindAction("Guide");
+        keyEsc = InputSystem.actions.FindAction("Esc");
         Select(0);
 
         SetGuide(false);
@@ -45,7 +50,17 @@ public class Game : MonoBehaviour, IBrailler
     }
     void Awake()
     {
+        gameManager = GameManager.Instance;
+
         brailler.SetParent(this);
+    }
+    public void SetEscMenu(bool value)
+    {
+        escMenu.SetActive(value);
+    }
+    public void ToggleEscMenu()
+    {
+        SetEscMenu(!escMenu.activeSelf);
     }
     public void SetGuide(bool guide)
     {
@@ -146,6 +161,10 @@ public class Game : MonoBehaviour, IBrailler
             scrollToBottom--;
             scrollView.verticalScrollbar.value = 0;
             textScrollView.verticalScrollbar.value = 0;
+        }
+        if (keyEsc.WasPressedThisFrame())
+        {
+            ToggleEscMenu();
         }
     }
 }

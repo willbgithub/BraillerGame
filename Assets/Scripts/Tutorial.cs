@@ -5,6 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class Tutorial : MonoBehaviour, IBrailler
 {
+    GameManager gameManager;
+
     [SerializeField] BrailleCell brailleCell;
     [SerializeField] Brailler brailler;
     [SerializeField] AudioClip[] audioAlphabet;
@@ -16,18 +18,32 @@ public class Tutorial : MonoBehaviour, IBrailler
     [SerializeField] AudioSource audioSource;
     [SerializeField] TMP_Text characterLabel;
     [SerializeField] GameObject guide;
+    [SerializeField] GameObject menu;
     InputAction keyEnter;
     InputAction keyGuide;
+    InputAction keyEscape;
     public void Awake()
     {
+        gameManager = GameManager.Instance;
+
         brailler.SetParent(this);
+        keyEnter = InputSystem.actions.FindAction("Enter");
+        keyGuide = InputSystem.actions.FindAction("Guide");
+        keyEscape = InputSystem.actions.FindAction("Esc");
     }
     public void Start()
     {
-        keyEnter = InputSystem.actions.FindAction("Enter");
-        keyGuide = InputSystem.actions.FindAction("Guide");
         brailleCell.SetIndex(63);
         SetGuide(false);
+        SetMenu(false);
+    }
+    public void SetMenu(bool menu)
+    {
+        this.menu.SetActive(menu);
+    }
+    public void ToggleMenu()
+    {
+        SetMenu(!menu.activeSelf);
     }
     public void SetGuide(bool guide)
     {
@@ -50,6 +66,10 @@ public class Tutorial : MonoBehaviour, IBrailler
         if (keyGuide.WasPressedThisFrame())
         {
             ToggleGuide();
+        }
+        if (keyEscape.WasPressedThisFrame())
+        {
+            ToggleMenu();
         }
     }
     public void OnIndexWrite(int index)

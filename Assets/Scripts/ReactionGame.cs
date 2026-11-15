@@ -8,6 +8,8 @@ using UnityEngine.UI;
 
 public class ReactionGame : MonoBehaviour, IBrailler
 {
+    GameManager gameManager;
+
     // Data
     int score = 0;
     int totalWrites = 0;
@@ -135,30 +137,6 @@ public class ReactionGame : MonoBehaviour, IBrailler
     }
     public void PlayAudioQueue()
     {
-        if (audioQueue[0] == audioNumberYes[0])
-        {
-            Debug.Log("1");
-        }
-        else if (audioQueue[0] == audioNumberYes[1])
-        {
-            Debug.Log("2");
-        }
-        else if (audioQueue[0] == audioNumberYes[2])
-        {
-            Debug.Log("3");
-        }
-        else if (audioQueue[0] == audioNumberYes[3])
-        {
-            Debug.Log("4");
-        }
-        else if (audioQueue[0] == audioNumberYes[4])
-        {
-            Debug.Log("5");
-        }
-        else if (audioQueue[0] == audioNumberYes[5])
-        {
-            Debug.Log("6");
-        }
         PlaySound(audioQueue[0]);
         delayTimer = SECONDS_BETWEEN_SOUNDS_IN_QUEUE;
         audioQueuePlaying = true;
@@ -245,6 +223,8 @@ public class ReactionGame : MonoBehaviour, IBrailler
     // Other
     void Awake()
     {
+        gameManager = GameManager.Instance;
+
         brailler.SetParent(this);
         keyUpArrow = InputSystem.actions.FindAction("UpArrow");
         keyDownArrow = InputSystem.actions.FindAction("DownArrow");
@@ -258,6 +238,7 @@ public class ReactionGame : MonoBehaviour, IBrailler
         brailleCellCopy.SetBackgroundColor(colorDefault);
         ShowCopyCell(toggleShowCopyCell.IsOn);
         StartCoroutine(StartRound(0));
+        Debug.Log($"{gameManager.masterVolume}");
     }
 
     void Update()
@@ -299,34 +280,6 @@ public class ReactionGame : MonoBehaviour, IBrailler
             {
                 delayTimer = SECONDS_BETWEEN_SOUNDS_IN_QUEUE;
                 audioQueue.RemoveAt(0);
-                if (audioQueue.Count > 0)
-                {
-                    PlaySound(audioQueue[0]);
-                    if (audioQueue[0] == audioNumberYes[0])
-                    {
-                        Debug.Log("1");
-                    }
-                    else if (audioQueue[0] == audioNumberYes[1])
-                    {
-                        Debug.Log("2");
-                    }
-                    else if (audioQueue[0] == audioNumberYes[2])
-                    {
-                        Debug.Log("3");
-                    }
-                    else if (audioQueue[0] == audioNumberYes[3])
-                    {
-                        Debug.Log("4");
-                    }
-                    else if (audioQueue[0] == audioNumberYes[4])
-                    {
-                        Debug.Log("5");
-                    }
-                    else if (audioQueue[0] == audioNumberYes[5])
-                    {
-                        Debug.Log("6");
-                    }
-                }
             }
             else
             {

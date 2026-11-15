@@ -5,9 +5,12 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
+    GameManager gameManager;
+
     InputAction keyUpArrow;
     InputAction keyDownArrow;
     InputAction keyEnter;
+    [SerializeField] GameObject image;
 
     [SerializeField] GameObject[] selectables;
     int selectedIndex;
@@ -55,12 +58,16 @@ public class MainMenu : MonoBehaviour
             OnQuitButtonPress();
         }
     }
-    void Start()
+    void Awake()
     {
+        gameManager = GameManager.Instance;
+
         keyUpArrow = InputSystem.actions.FindAction("UpArrow");
         keyDownArrow = InputSystem.actions.FindAction("DownArrow");
         keyEnter = InputSystem.actions.FindAction("Enter");
-
+    }
+    void Start()
+    {
         Select(0);
     }
     void Update()
