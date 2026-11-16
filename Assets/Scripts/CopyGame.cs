@@ -18,6 +18,7 @@ public class ReactionGame : MonoBehaviour, IBrailler
     InputAction keyUpArrow;
     InputAction keyDownArrow;
     InputAction keyEnter;
+    InputAction keyEsc;
 
     [SerializeField] GameObject[] selectables;
     int selectedIndex;
@@ -34,6 +35,7 @@ public class ReactionGame : MonoBehaviour, IBrailler
     [SerializeField] Color colorWrong;
     // Serialized Objects
     [SerializeField] GameObject guide;
+    [SerializeField] GameObject escMenu;
     [SerializeField] Toggle toggleLetterMode;
     [SerializeField] Toggle toggleShowCopyCell;
     [SerializeField] Brailler brailler;
@@ -56,6 +58,14 @@ public class ReactionGame : MonoBehaviour, IBrailler
         SceneManager.LoadScene("MainMenu");
     }
     // Game
+    public void SetEscMenu(bool value)
+    {
+        escMenu.SetActive(value);
+    }
+    public void ToggleEscMenu()
+    {
+        SetEscMenu(!escMenu.activeSelf);
+    }
     public void SetGuide(bool guide)
     {
         this.guide.SetActive(guide);
@@ -137,8 +147,7 @@ public class ReactionGame : MonoBehaviour, IBrailler
     }
     public void PlayAudioQueue()
     {
-        PlaySound(audioQueue[0]);
-        delayTimer = SECONDS_BETWEEN_SOUNDS_IN_QUEUE;
+        delayTimer = 0;
         audioQueuePlaying = true;
     }
     public void PlaySound(AudioClip sound)
@@ -208,13 +217,9 @@ public class ReactionGame : MonoBehaviour, IBrailler
     {
         if (selectedIndex == 0)
         {
-            OnBackButtonPress();
-        }
-        else if (selectedIndex == 1)
-        {
             toggleLetterMode.IsOn = !toggleLetterMode.IsOn;
         }
-        else if (selectedIndex == 2)
+        else if (selectedIndex == 1)
         {
             toggleShowCopyCell.IsOn = !toggleShowCopyCell.IsOn;
         }
@@ -230,15 +235,16 @@ public class ReactionGame : MonoBehaviour, IBrailler
         keyDownArrow = InputSystem.actions.FindAction("DownArrow");
         keyEnter = InputSystem.actions.FindAction("Enter");
         keyGuide = InputSystem.actions.FindAction("Guide");
+        keyEsc = InputSystem.actions.FindAction("Esc");
     }
     void Start()
     {
         Select(0);
+        SetEscMenu(false);
         SetGuide(false);
         brailleCellCopy.SetBackgroundColor(colorDefault);
         ShowCopyCell(toggleShowCopyCell.IsOn);
         StartCoroutine(StartRound(0));
-        Debug.Log($"{gameManager.masterVolume}");
     }
 
     void Update()
@@ -268,6 +274,11 @@ public class ReactionGame : MonoBehaviour, IBrailler
             ToggleGuide();
         }
 
+        if (keyEsc.WasPressedThisFrame())
+        {
+            ToggleEscMenu();
+        }
+
         // Audio Queue
         if (audioQueuePlaying)
         {
@@ -279,6 +290,7 @@ public class ReactionGame : MonoBehaviour, IBrailler
             else if (delayTimer <= 0)
             {
                 delayTimer = SECONDS_BETWEEN_SOUNDS_IN_QUEUE;
+                PlaySound(audioQueue[0]);
                 audioQueue.RemoveAt(0);
             }
             else

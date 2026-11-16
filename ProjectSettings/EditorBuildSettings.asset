@@ -12,7 +12,7 @@ EditorBuildSettings:
     path: Assets/Scenes/PaperTest.unity
     guid: c0f0c53cef39067458abbaef28903845
   - enabled: 1
-    path: Assets/Scenes/ReactionGame.unity
+    path: Assets/Scenes/CopyGame.unity
     guid: aeff7490ac3b6e64099c3601213c1199
   - enabled: 1
     path: Assets/Scenes/Tutorial.unity

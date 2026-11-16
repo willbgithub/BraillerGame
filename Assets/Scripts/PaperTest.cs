@@ -36,24 +36,6 @@ public class Game : MonoBehaviour, IBrailler
     [SerializeField] ScrollRect textScrollView;
     [SerializeField] TMP_Text textLabel;
 
-    void Start()
-    {
-        keyUpArrow = InputSystem.actions.FindAction("UpArrow");
-        keyDownArrow = InputSystem.actions.FindAction("DownArrow");
-        keyEnter = InputSystem.actions.FindAction("Enter");
-        keyGuide = InputSystem.actions.FindAction("Guide");
-        keyEsc = InputSystem.actions.FindAction("Esc");
-        Select(0);
-
-        SetGuide(false);
-        textLabel.text = "";
-    }
-    void Awake()
-    {
-        gameManager = GameManager.Instance;
-
-        brailler.SetParent(this);
-    }
     public void SetEscMenu(bool value)
     {
         escMenu.SetActive(value);
@@ -124,14 +106,25 @@ public class Game : MonoBehaviour, IBrailler
     {
         if (selectedIndex == 0)
         {
-            OnBackButtonPress();
-        }
-        else if (selectedIndex == 1)
-        {
             OnClearButtonPress();
         }
     }
-
+    void Awake()
+    {
+        brailler.SetParent(this);
+        keyUpArrow = InputSystem.actions.FindAction("UpArrow");
+        keyDownArrow = InputSystem.actions.FindAction("DownArrow");
+        keyEnter = InputSystem.actions.FindAction("Enter");
+        keyGuide = InputSystem.actions.FindAction("Guide");
+        keyEsc = InputSystem.actions.FindAction("Esc");
+        textLabel.text = "";
+    }
+    void Start()
+    {
+        gameManager = GameManager.Instance;
+        Select(0);
+        SetGuide(false);
+    }
     void Update()
     {
         if (keyGuide.WasPressedThisFrame())

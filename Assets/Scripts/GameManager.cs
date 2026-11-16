@@ -11,10 +11,17 @@ public class GameManager : MonoBehaviour
     public float gameVolume = 1f;
     public bool narratorOn = true;
 
+    // Main menu
+    public int selectedIndex = 0;
+
     // Copy game
     public bool letterMode = true;
     public bool showCopyCell = true;
 
+    void Start()
+    {
+
+    }
     void Awake()
     {
         if (Instance != null)
@@ -25,5 +32,9 @@ public class GameManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+    }
+    void Update()
+    {
+
     }
 }

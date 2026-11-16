@@ -13,7 +13,6 @@ public class MainMenu : MonoBehaviour
     [SerializeField] GameObject image;
 
     [SerializeField] GameObject[] selectables;
-    int selectedIndex;
 
     public void OnBraillerTutorialButtonPress()
     {
@@ -25,7 +24,7 @@ public class MainMenu : MonoBehaviour
     }
     public void OnCopyGameButtonPress()
     {
-        SceneManager.LoadScene("ReactionGame");
+        SceneManager.LoadScene("CopyGame");
     }
     public void OnQuitButtonPress()
     {
@@ -33,57 +32,56 @@ public class MainMenu : MonoBehaviour
     }
     public void Select(int index)
     {
-        GameObject selected = selectables[selectedIndex];
+        GameObject selected = selectables[gameManager.selectedIndex];
         selected.transform.GetChild(0).gameObject.SetActive(false);
-        selectedIndex = index;
-        selected = selectables[selectedIndex];
+        gameManager.selectedIndex = index;
+        selected = selectables[gameManager.selectedIndex];
         selected.transform.GetChild(0).gameObject.SetActive(true);
     }
     public void OnEnterDown()
     {
-        if (selectedIndex == 0)
+        if (gameManager.selectedIndex == 0)
         {
             OnBraillerTutorialButtonPress();
         }
-        else if (selectedIndex == 1)
+        else if (gameManager.selectedIndex == 1)
         {
             OnPaperButtonPress();
         }
-        else if (selectedIndex == 2)
+        else if (gameManager.selectedIndex == 2)
         {
             OnCopyGameButtonPress();
         }
-        else if (selectedIndex == 3)
+        else if (gameManager.selectedIndex == 3)
         {
             OnQuitButtonPress();
         }
     }
     void Awake()
     {
-        gameManager = GameManager.Instance;
-
         keyUpArrow = InputSystem.actions.FindAction("UpArrow");
         keyDownArrow = InputSystem.actions.FindAction("DownArrow");
         keyEnter = InputSystem.actions.FindAction("Enter");
     }
     void Start()
     {
-        Select(0);
+        gameManager = GameManager.Instance;
+        Select(gameManager.selectedIndex);
     }
     void Update()
     {
         if (keyUpArrow.WasPressedThisFrame())
         {
-            if (selectedIndex > 0)
+            if (gameManager.selectedIndex > 0)
             {
-                Select(selectedIndex - 1);
+                Select(gameManager.selectedIndex - 1);
             }
         }
         if (keyDownArrow.WasPressedThisFrame())
         {
-            if (selectedIndex < selectables.Length - 1)
+            if (gameManager.selectedIndex < selectables.Length - 1)
             {
-                Select(selectedIndex+1);
+                Select(gameManager.selectedIndex + 1);
             }
         }
         if (keyEnter.WasPressedThisFrame())

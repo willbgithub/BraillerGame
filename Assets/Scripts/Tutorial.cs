@@ -18,32 +18,17 @@ public class Tutorial : MonoBehaviour, IBrailler
     [SerializeField] AudioSource audioSource;
     [SerializeField] TMP_Text characterLabel;
     [SerializeField] GameObject guide;
-    [SerializeField] GameObject menu;
+    [SerializeField] GameObject escMenu;
     InputAction keyEnter;
     InputAction keyGuide;
-    InputAction keyEscape;
-    public void Awake()
+    InputAction keyEsc;
+    public void SetEscMenu(bool escMenu)
     {
-        gameManager = GameManager.Instance;
-
-        brailler.SetParent(this);
-        keyEnter = InputSystem.actions.FindAction("Enter");
-        keyGuide = InputSystem.actions.FindAction("Guide");
-        keyEscape = InputSystem.actions.FindAction("Esc");
+        this.escMenu.SetActive(escMenu);
     }
-    public void Start()
+    public void ToggleEscMenu()
     {
-        brailleCell.SetIndex(63);
-        SetGuide(false);
-        SetMenu(false);
-    }
-    public void SetMenu(bool menu)
-    {
-        this.menu.SetActive(menu);
-    }
-    public void ToggleMenu()
-    {
-        SetMenu(!menu.activeSelf);
+        SetEscMenu(!escMenu.activeSelf);
     }
     public void SetGuide(bool guide)
     {
@@ -56,21 +41,6 @@ public class Tutorial : MonoBehaviour, IBrailler
     public void OnBackButtonPress()
     {
         SceneManager.LoadScene("MainMenu");
-    }
-    public void Update()
-    {
-        if (keyEnter.WasPressedThisFrame())
-        {
-            OnBackButtonPress();
-        }
-        if (keyGuide.WasPressedThisFrame())
-        {
-            ToggleGuide();
-        }
-        if (keyEscape.WasPressedThisFrame())
-        {
-            ToggleMenu();
-        }
     }
     public void OnIndexWrite(int index)
     {
@@ -131,5 +101,30 @@ public class Tutorial : MonoBehaviour, IBrailler
             return;
         }
         audioSource.Play();
+    }
+    public void Awake()
+    {
+        brailler.SetParent(this);
+        keyEnter = InputSystem.actions.FindAction("Enter");
+        keyGuide = InputSystem.actions.FindAction("Guide");
+        keyEsc = InputSystem.actions.FindAction("Esc");
+    }
+    public void Start()
+    {
+        gameManager = GameManager.Instance;
+        brailleCell.SetIndex(63);
+        SetGuide(false);
+        SetEscMenu(false);
+    }
+    public void Update()
+    {
+        if (keyGuide.WasPressedThisFrame())
+        {
+            ToggleGuide();
+        }
+        if (keyEsc.WasPressedThisFrame())
+        {
+            ToggleEscMenu();
+        }
     }
 }

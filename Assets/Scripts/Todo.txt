@@ -10,7 +10,9 @@ CAVE GAME
 COPY GAME
 	TODO
 
-		- esc menu
+		- audio setting on paper test
+
+		- adjustable voice speed
 		
 		- adjustable volumes
 
@@ -21,9 +23,11 @@ COPY GAME
 			- ctrl mutes
 			- adjustable speed
 
-		- Main menu buttons remember where they were when you go back
+		
 
 	Completed
+		- esc menu
+		- Main menu buttons remember where they were when you go back
 		- quit game
 		- percentage score
 		- redid tutorial
