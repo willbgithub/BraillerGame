@@ -124,6 +124,7 @@ public class Game : MonoBehaviour, IBrailler
         gameManager = GameManager.Instance;
         Select(0);
         SetGuide(false);
+        SetEscMenu(false);
     }
     void Update()
     {
