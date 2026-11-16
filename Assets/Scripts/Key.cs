@@ -4,18 +4,20 @@ using UnityEngine.UI;
 
 public class Key : MonoBehaviour
 {
+    AudioSystem audioSystem;
+
     // Custom Parameters
     [SerializeField] Color defaultColor;
     [SerializeField] Color pressedColor;
     // Serialized objects
     [SerializeField] Image background;
     [SerializeField] TMP_Text label;
-    [SerializeField] AudioSource audioPlayer;
+    [SerializeField] AudioClip audioKeyPress;
 
     public void OnDown()
     {
         background.color = pressedColor;
-        audioPlayer.Play();
+        audioSystem.PlaySound(audioKeyPress, AudioSystem.SOUND_TYPE.GAME);
     }
     public void OnUp()
     {
@@ -24,5 +26,18 @@ public class Key : MonoBehaviour
     public void SetLabel(string text)
     {
         label.text = text;
+    }
+
+    void Awake()
+    {
+
+    }
+    void Start()
+    {
+        audioSystem = AudioSystem.Instance;
+    }
+    void Update()
+    {
+        
     }
 }

@@ -6,7 +6,8 @@ using UnityEngine.UI;
 
 public class Game : MonoBehaviour, IBrailler
 {
-    public GameManager gameManager;
+    GameManager gameManager;
+    public AudioSystem audioSystem;
 
     public void OnBackButtonPress()
     {
@@ -35,7 +36,14 @@ public class Game : MonoBehaviour, IBrailler
     [SerializeField] ScrollRect scrollView;
     [SerializeField] ScrollRect textScrollView;
     [SerializeField] TMP_Text textLabel;
+    [SerializeField] Toggle audioToggle;
 
+    [SerializeField] AudioClip testSound;
+
+    public void SetAudioEnabled(bool value)
+    {
+        gameManager.paperTestAudio = value;
+    }
     public void SetEscMenu(bool value)
     {
         escMenu.SetActive(value);
@@ -55,6 +63,10 @@ public class Game : MonoBehaviour, IBrailler
     public void OnIndexWrite(int index)
     {
         CreateBrailleCell(index);
+        if (audioToggle.IsOn && Braille.ContainsIndex(index))
+        {
+            audioSystem.PlayCharacterAudio(Braille.GetCharacter(index));
+        }
     }
     public void OnBackspaceDown()
     {
@@ -122,6 +134,8 @@ public class Game : MonoBehaviour, IBrailler
     void Start()
     {
         gameManager = GameManager.Instance;
+        audioSystem = AudioSystem.Instance;
+        audioToggle.IsOn = gameManager.paperTestAudio;
         Select(0);
         SetGuide(false);
         SetEscMenu(false);

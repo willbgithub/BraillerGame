@@ -1575,7 +1575,7 @@ GameObject:
   - component: {fileID: 1454709145129474535}
   - component: {fileID: 3410678571249122138}
   m_Layer: 0
-  m_Name: GameVolumeSlider
+  m_Name: NarratorSpeedSlider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1656,7 +1656,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 4915045646000080304}
         m_TargetAssemblyTypeName: EscMenu, Assembly-CSharp
-        m_MethodName: OnGameVolumeValueChange
+        m_MethodName: OnNarratorSpeedValueChange
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2398,6 +2398,7 @@ MonoBehaviour:
   voiceVolume: {fileID: 7862346334562389717}
   gameVolume: {fileID: 7462792075425039503}
   toggleNarrator: {fileID: 2127217380847413747}
+  narratorSpeed: {fileID: 3410678571249122138}
   quitButton: {fileID: 1320317196789241597}
 --- !u!1 &7455248032400904959
 GameObject:

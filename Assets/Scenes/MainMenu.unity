@@ -379,6 +379,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: EscMenu
       objectReference: {fileID: 0}
+    - target: {fileID: 7132897593577145070, guid: fdb36007e8b1da64e9c60ebcf5b2a26a, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7512685348783497271, guid: fdb36007e8b1da64e9c60ebcf5b2a26a, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -550,6 +554,50 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 7132897593577145070, guid: fdb36007e8b1da64e9c60ebcf5b2a26a, type: 3}
   m_PrefabInstance: {fileID: 147636821}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &210342063
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 210342065}
+  - component: {fileID: 210342064}
+  m_Layer: 0
+  m_Name: AudioSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &210342064
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 210342063}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8ee53abb5305b0458c4254435e599bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+--- !u!4 &210342065
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 210342063}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 412.57864, y: 225.07265, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &233789507
 GameObject:
   m_ObjectHideFlags: 0
@@ -1407,10 +1455,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   masterVolume: 1
-  voiceVolume: 1
-  gameVolume: 1
+  narratorSpeed: 1
   narratorOn: 1
   selectedIndex: 0
+  paperTestAudio: 1
   letterMode: 1
   showCopyCell: 1
 --- !u!4 &672021062
@@ -3000,3 +3048,4 @@ SceneRoots:
   - {fileID: 1748425066}
   - {fileID: 1911109798}
   - {fileID: 672021062}
+  - {fileID: 210342065}

@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public class Tutorial : MonoBehaviour, IBrailler
 {
     GameManager gameManager;
+    AudioSystem audioSystem;
 
     [SerializeField] BrailleCell brailleCell;
     [SerializeField] Brailler brailler;
@@ -47,7 +48,7 @@ public class Tutorial : MonoBehaviour, IBrailler
         brailleCell.SetIndex(index);
         if (brailleCell.HasCharacter())
         {
-            PlayCharacterAudio(brailleCell.GetCharacter());
+            audioSystem.PlayCharacterAudio(brailleCell.GetCharacter());
             characterLabel.text = brailleCell.GetCharacter().ToString();
         }
         else
@@ -64,44 +65,7 @@ public class Tutorial : MonoBehaviour, IBrailler
         brailleCell.SetIndex(0);
     }
 
-    public void PlayCharacterAudio(char character)
-    {
-        if (character == ' ' || character == '\n')
-        {
-            return;
-        }
-        if (character >= 'a' && character <= 'z')
-        {
-            audioSource.resource = audioAlphabet[character - 'a'];
-            audioSource.Play();
-        }
-        else if (character >= '0' && character <= '9')
-        {
-            audioSource.resource = audioNumbers[character - '0'];
-        }
-        else if (character == '!')
-        {
-            audioSource.resource = audioExclamationPoint;
-        }
-        else if (character == '.')
-        {
-            audioSource.resource = audioPeriod;
-        }
-        else if (character == '?')
-        {
-            audioSource.resource = audioQuestionMark;
-        }
-        else if (character == ',')
-        {
-            audioSource.resource = audioComma;
-        }
-        else
-        {
-            Debug.LogError($"ERROR: No audio found for '{character}'!");
-            return;
-        }
-        audioSource.Play();
-    }
+    
     public void Awake()
     {
         brailler.SetParent(this);
