@@ -7,12 +7,7 @@ using UnityEngine.UI;
 public class Game : MonoBehaviour, IBrailler
 {
     GameManager gameManager;
-    public AudioSystem audioSystem;
-
-    public void OnBackButtonPress()
-    {
-        SceneManager.LoadScene("MainMenu");
-    }
+    AudioSystem audioSystem;
 
     // Data
     [SerializeField] GameObject[] selectables;
@@ -42,7 +37,7 @@ public class Game : MonoBehaviour, IBrailler
 
     public void SetAudioEnabled(bool value)
     {
-        gameManager.paperTestAudio = value;
+        gameManager.paperTestAudioOn = value;
     }
     public void SetEscMenu(bool value)
     {
@@ -135,7 +130,7 @@ public class Game : MonoBehaviour, IBrailler
     {
         gameManager = GameManager.Instance;
         audioSystem = AudioSystem.Instance;
-        audioToggle.IsOn = gameManager.paperTestAudio;
+        audioToggle.IsOn = gameManager.paperTestAudioOn;
         Select(0);
         SetGuide(false);
         SetEscMenu(false);

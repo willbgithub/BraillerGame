@@ -9,6 +9,7 @@ using UnityEngine.UI;
 public class ReactionGame : MonoBehaviour, IBrailler
 {
     GameManager gameManager;
+    AudioSystem audioSystem;
 
     // Data
     int score = 0;
@@ -23,11 +24,8 @@ public class ReactionGame : MonoBehaviour, IBrailler
     [SerializeField] GameObject[] selectables;
     int selectedIndex;
 
-    // Audio Queue
-    List<AudioClip> audioQueue = new List<AudioClip>();
     bool audioQueuePlaying = false;
-    const float SECONDS_BETWEEN_SOUNDS_IN_QUEUE = 0.2f;
-    float delayTimer = 0;
+    float audioQueueTimer = 0;
 
     // Custom Parameters
     [SerializeField] Color colorDefault;
@@ -45,12 +43,8 @@ public class ReactionGame : MonoBehaviour, IBrailler
     [SerializeField] TMP_Text labelScore;
     [SerializeField] TMP_Text labelInputLetter;
     [SerializeField] TMP_Text labelCopyLetter;
-    [SerializeField] AudioClip audioNewRound;
     [SerializeField] AudioClip audioCorrect;
     [SerializeField] AudioClip audioWrong;
-    [SerializeField] AudioClip[] audioNumberYes;
-    [SerializeField] AudioClip[] audioAlphabet;
-    [SerializeField] AudioSource[] audioPlayer;
 
 
     public void OnBackButtonPress()
@@ -117,7 +111,7 @@ public class ReactionGame : MonoBehaviour, IBrailler
         // Character
         if (toggleLetterMode.IsOn)
         {
-            PlaySound(audioAlphabet[brailleCellCopy.GetCharacter() - 'a']);
+            audioSystem.PlayCharacterAudio(brailleCellCopy.GetCharacter());
             brailler.SetOutputEnabled(true);
             yield break;
         }
@@ -136,29 +130,16 @@ public class ReactionGame : MonoBehaviour, IBrailler
                 dots[i] = false;
             }
         }
+        List<char> characters = new List<char>();
         for (int i = 0; i < 6; i++)
         {
             if (dots[i])
             {
-                audioQueue.Add(audioNumberYes[i]);
+                characters.Add((char)('1'+i));
             }
         }
-        PlayAudioQueue();
-    }
-    public void PlayAudioQueue()
-    {
-        delayTimer = 0;
         audioQueuePlaying = true;
-    }
-    public void PlaySound(AudioClip sound)
-    {
-        int channel = 0;
-        while (audioPlayer[channel].isPlaying)
-        {
-            channel++;
-        }
-        audioPlayer[channel].resource = sound;
-        audioPlayer[channel].Play();
+        audioQueueTimer = audioSystem.PlayCharacterQueue(characters);
     }
 
     // Input
@@ -179,7 +160,7 @@ public class ReactionGame : MonoBehaviour, IBrailler
         {
             labelFeedback.text = "CORRECT!";
             brailleCellInput.SetBackgroundColor(colorCorrect);
-            PlaySound(audioCorrect);
+            audioSystem.PlaySound(audioCorrect, AudioSystem.SOUND_TYPE.GAME);
             Score(true);
             StartCoroutine(StartRound(1));
         }
@@ -187,11 +168,15 @@ public class ReactionGame : MonoBehaviour, IBrailler
         {
             labelFeedback.text = "WRONG!";
             brailleCellInput.SetBackgroundColor(colorWrong);
-            PlaySound(audioWrong);
+            audioSystem.PlaySound(audioWrong, AudioSystem.SOUND_TYPE.GAME);
             Score(false);
             StartCoroutine(PlayBrailleAudio(brailleCellCopy.GetIndex(), 1));
         }
         
+    }
+    public void OnAudioQueueEnd()
+    {
+        brailler.SetOutputEnabled(true);
     }
     public void OnBackspaceDown()
     {
@@ -199,10 +184,6 @@ public class ReactionGame : MonoBehaviour, IBrailler
     }
     public void OnSpaceDown()
     {
-        if (audioQueuePlaying)
-        {
-            return;
-        }
         StartCoroutine(PlayBrailleAudio(brailleCellCopy.GetIndex()));
     }
     public void Select(int index)
@@ -228,7 +209,7 @@ public class ReactionGame : MonoBehaviour, IBrailler
     // Other
     void Awake()
     {
-        gameManager = GameManager.Instance;
+        
 
         brailler.SetParent(this);
         keyUpArrow = InputSystem.actions.FindAction("UpArrow");
@@ -239,6 +220,9 @@ public class ReactionGame : MonoBehaviour, IBrailler
     }
     void Start()
     {
+        gameManager = GameManager.Instance;
+        audioSystem = AudioSystem.Instance;
+        
         Select(0);
         SetEscMenu(false);
         SetGuide(false);
@@ -249,6 +233,18 @@ public class ReactionGame : MonoBehaviour, IBrailler
 
     void Update()
     {
+        // Audio Queue
+        if (audioQueueTimer > 0)
+        {
+            audioQueueTimer -= Time.deltaTime;
+        }
+        else if (audioQueuePlaying)
+        {
+            audioQueuePlaying = false;
+            OnAudioQueueEnd();
+        }
+
+        // Controls
         if (keyUpArrow.WasPressedThisFrame())
         {
             if (selectedIndex > 0)
@@ -277,26 +273,6 @@ public class ReactionGame : MonoBehaviour, IBrailler
         if (keyEsc.WasPressedThisFrame())
         {
             ToggleEscMenu();
-        }
-
-        // Audio Queue
-        if (audioQueuePlaying)
-        {
-            if (audioQueue.Count == 0)
-            {
-                audioQueuePlaying = false;
-                brailler.SetOutputEnabled(true);
-            }
-            else if (delayTimer <= 0)
-            {
-                delayTimer = SECONDS_BETWEEN_SOUNDS_IN_QUEUE;
-                PlaySound(audioQueue[0]);
-                audioQueue.RemoveAt(0);
-            }
-            else
-            {
-                delayTimer -= Time.deltaTime;
-            }
         }
     }
 }

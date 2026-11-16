@@ -9,23 +9,17 @@ CAVE GAME
 
 COPY GAME
 	TODO
-
-		- audio setting on paper test
-
-		- adjustable voice speed
-		
-		- adjustable volumes
-
 		- Narrator mode
 			- ask for setting when you open the game
-			- remember setting
 			- toggle with N
 			- ctrl mutes
 			- adjustable speed
-
-		
+		- Remember settings when you close game
 
 	Completed
+	    - audio setting on paper test
+		- adjustable volumes
+		- adjustable voice speed
 		- esc menu
 		- Main menu buttons remember where they were when you go back
 		- quit game

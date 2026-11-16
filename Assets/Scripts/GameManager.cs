@@ -1,34 +1,65 @@
 using System.Linq;
 using UnityEngine;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
+    AudioSystem audioSystem;
 
     // Global settings
-    public float masterVolume = 1f;
-    public Dictionary<AudioSystem.SOUND_TYPE, float> soundSettings = new()
+    float MasterVolume = 1f;
+    float NarratorSpeed = 1f;
+    bool NarratorOn = true;
+    Dictionary<AudioSystem.SOUND_TYPE, float> soundSettings = new()
     {
         { AudioSystem.SOUND_TYPE.GAME, 1f },
         { AudioSystem.SOUND_TYPE.VOICE, 1f },
     };
-    public float narratorSpeed = 1f;
-    public bool narratorOn = true;
+
+    public float masterVolume
+    {
+        get { return MasterVolume; }
+        set { MasterVolume = value; if (!audioSystem.IsUnityNull()) { audioSystem.OnSoundSettingsUpdate(); } }
+    }
+    public float narratorSpeed
+    {
+        get { return NarratorSpeed; }
+        set { NarratorSpeed = value; if (!audioSystem.IsUnityNull()) { audioSystem.OnSoundSettingsUpdate(); } }
+    }
+    public bool narratorOn
+    {
+        get { return NarratorOn; }
+        set { NarratorOn = value; if (!audioSystem.IsUnityNull()) {audioSystem.OnSoundSettingsUpdate(); }}
+    }
+    public void SetVolume(AudioSystem.SOUND_TYPE soundType, float value)
+    {
+        soundSettings[soundType] = value;
+        if (!audioSystem.IsUnityNull())
+        {
+            audioSystem.OnSoundSettingsUpdate();
+        }
+    }
+    public float GetVolume(AudioSystem.SOUND_TYPE soundType)
+    {
+        return soundSettings[soundType];
+    }
 
     // Main menu
-    public int selectedIndex = 0;
+    public int menuIndex = 0;
 
     // Paper test
-    public bool paperTestAudio = true;
+    public bool paperTestAudioOn = true;
 
     // Copy game
     public bool letterMode = true;
     public bool showCopyCell = true;
 
+    // Built-in
     void Start()
     {
-
+        audioSystem = AudioSystem.Instance;
     }
     void Awake()
     {
@@ -39,6 +70,7 @@ public class GameManager : MonoBehaviour
         }
 
         Instance = this;
+
         DontDestroyOnLoad(gameObject);
     }
     void Update()

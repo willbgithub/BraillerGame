@@ -5,6 +5,7 @@ using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Audio;
+using static AudioSystem;
 
 public class AudioSystem : MonoBehaviour
 {
@@ -12,12 +13,59 @@ public class AudioSystem : MonoBehaviour
     public static AudioSystem Instance;
     GameManager gameManager;
     Dictionary<AudioSource, SOUND_TYPE> audioSources;
+    AudioMixerGroup gameMixer;
+    AudioMixerGroup voiceMixer;
     public enum SOUND_TYPE { GAME, VOICE };
 
     int maxChannels = 10;
     Dictionary<char, AudioClip> audioDictionary;
 
+    // Audio Queue
+    List<AudioClip> audioQueue = new List<AudioClip>();
+    bool audioQueuePlaying = false;
+    float secondsBetweenSounds = 0;
+    float delayTimer = 0;
+
     // Functions
+    public float PlayCharacterQueue(List<char> queue)
+    {
+        audioQueue = new List<AudioClip>();
+        int queueCount = queue.Count;
+        for (int i = 0; i < queueCount; i++)
+        {
+            audioQueue.Add(audioDictionary[queue[i]]);
+        }
+        secondsBetweenSounds = 0.8f / gameManager.narratorSpeed;
+        delayTimer = 0;
+        audioQueuePlaying = true;
+        return secondsBetweenSounds * queueCount;
+    }
+    public void Stop()
+    {
+        for (int i = 0; i < audioSources.Count; i++)
+        {
+            audioSources.ElementAt(i).Key.Stop();
+        }
+    }
+    public void OnSoundSettingsUpdate()
+    {
+        float inverse = Mathf.Sqrt(1 / gameManager.narratorSpeed);
+        voiceMixer.audioMixer.SetFloat("pitchBend", inverse);
+        voiceMixer.audioMixer.SetFloat("pitchBend2", inverse);
+        for (int i = 0; i < audioSources.Count; i++)
+        {
+            AudioSource audioSource = audioSources.ElementAt(i).Key;
+            SOUND_TYPE soundType = audioSources.ElementAt(i).Value;
+            // Volume
+            audioSource.volume = gameManager.masterVolume * gameManager.GetVolume(soundType);
+            // Pitch
+            if (soundType == SOUND_TYPE.VOICE)
+            {
+                Debug.Log('v');
+                audioSource.pitch = gameManager.narratorSpeed;
+            }
+        }
+    }
     public void CreateDict()
     {
         audioDictionary = new Dictionary<char, AudioClip>()
@@ -71,21 +119,20 @@ public class AudioSystem : MonoBehaviour
     }
     public void PlaySound(AudioClip sound, SOUND_TYPE soundType)
     {
-        Debug.Log($"PlaySound({sound}, {soundType})");
+        //Debug.Log($"PlaySound({sound}, {soundType})");
 
         //Determine volume
-        Debug.Log($"gameManager: {gameManager}");
-        Debug.Log($"gameManager.masterVolume: {gameManager.masterVolume}");
-        Debug.Log($"gameManager.soundSettings: {gameManager.soundSettings}");
-        Debug.Log($"gameManager.soundSettings[soundType]: {gameManager.soundSettings[soundType]}");
-        float volume = gameManager.masterVolume * gameManager.soundSettings[soundType];
-        Debug.Log($"volume: {volume}");
+        //Debug.Log($"gameManager: {gameManager}");
+        //Debug.Log($"gameManager.masterVolume: {gameManager.masterVolume}");
+        //Debug.Log($"gameManager.soundSettings[soundType]: {gameManager.GetVolume(soundType)}");
+        float volume = gameManager.masterVolume * gameManager.GetVolume(soundType);
+        //Debug.Log($"volume: {volume}");
 
         //Determine speed and play sound
-        Debug.Log($"SOUND_TYPE.VOICE: {SOUND_TYPE.VOICE}");
+        //Debug.Log($"SOUND_TYPE.VOICE: {SOUND_TYPE.VOICE}");
         if (soundType == SOUND_TYPE.VOICE)
         {
-            Debug.Log($"gameManager.narratorSpeed: {gameManager.narratorSpeed}");
+            //Debug.Log($"gameManager.narratorSpeed: {gameManager.narratorSpeed}");
             PlaySound(sound, volume, gameManager.narratorSpeed, soundType);
         }
         else
@@ -111,18 +158,26 @@ public class AudioSystem : MonoBehaviour
     }
     public void PlaySound(AudioClip sound, float volume, float speed, SOUND_TYPE soundType)
     {
-        //Debug.Log($"PlaySound({sound}, {volume}, {speed})");
+        ////Debug.Log($"PlaySound({sound}, {volume}, {speed})");
         AudioSource audioSource = GetAvailableSource(soundType);
-        //Debug.Log($"audioSource: {audioSource}");
+        ////Debug.Log($"audioSource: {audioSource}");
         audioSource.resource = sound;
         audioSource.volume = volume;
         audioSource.pitch = speed;
+        if (soundType == SOUND_TYPE.GAME)
+        {
+            audioSource.outputAudioMixerGroup = gameMixer;
+        }
+        else if (soundType == SOUND_TYPE.VOICE)
+        {
+            audioSource.outputAudioMixerGroup = voiceMixer;
+        }
         audioSource.Play();
     }
     public AudioSource GetAvailableSource(SOUND_TYPE soundType)
     {
-        //Debug.Log($"audioSources: {audioSources}");
-        //Debug.Log($"audioSources.Count: {audioSources.Count}");
+        ////Debug.Log($"audioSources: {audioSources}");
+        ////Debug.Log($"audioSources.Count: {audioSources.Count}");
         for (int i = 0; i < audioSources.Count; i++)
         {
             AudioSource audioSource = audioSources.ElementAt(i).Key;
@@ -175,9 +230,32 @@ public class AudioSystem : MonoBehaviour
     void Start()
     {
         gameManager = GameManager.Instance;
+
+        gameMixer = (Resources.Load("Game") as AudioMixer).FindMatchingGroups("Master")[0];
+        voiceMixer = (Resources.Load("Voice") as AudioMixer).FindMatchingGroups("Master")[0];
     }
     void Update()
     {
-        
+        // Audio Queue
+        if (audioQueuePlaying)
+        {
+            if (audioQueue.Count <= 0)
+            {
+                // Queue is over
+                audioQueuePlaying = false;
+            }
+            else if (delayTimer <= 0)
+            {
+                // Play sound
+                PlaySound(audioQueue[0], SOUND_TYPE.VOICE);
+                OnSoundSettingsUpdate();
+                audioQueue.RemoveAt(0);
+                delayTimer = secondsBetweenSounds;
+            }
+            else
+            {
+                delayTimer -= Time.deltaTime;
+            }
+        }
     }
 }

@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class EscMenu : MonoBehaviour
 {
     GameManager gameManager;
+    AudioSystem audioSystem;
 
     [SerializeField] Slider masterVolume;
     [SerializeField] Slider voiceVolume;
@@ -18,11 +19,11 @@ public class EscMenu : MonoBehaviour
     }
     public void OnVoiceVolumeValueChange(float value)
     {
-        gameManager.soundSettings[AudioSystem.SOUND_TYPE.VOICE] = value;
+        gameManager.SetVolume(AudioSystem.SOUND_TYPE.VOICE, value);
     }
     public void OnGameVolumeValueChange(float value)
     {
-        gameManager.soundSettings[AudioSystem.SOUND_TYPE.GAME] = value;
+        gameManager.SetVolume(AudioSystem.SOUND_TYPE.GAME, value);
     }
     public void OnToggleNarrator(bool value)
     {
@@ -35,6 +36,7 @@ public class EscMenu : MonoBehaviour
     public void OnQuitButtonPress()
     {
         SceneManager.LoadScene("MainMenu");
+        audioSystem.Stop();
     }
     public void Awake()
     {
@@ -43,9 +45,10 @@ public class EscMenu : MonoBehaviour
     public void Start()
     {
         gameManager = GameManager.Instance;
+        audioSystem = AudioSystem.Instance;
         masterVolume.value = gameManager.masterVolume;
-        voiceVolume.value = gameManager.soundSettings[AudioSystem.SOUND_TYPE.VOICE];
-        gameVolume.value = gameManager.soundSettings[AudioSystem.SOUND_TYPE.GAME];
+        voiceVolume.value = gameManager.GetVolume(AudioSystem.SOUND_TYPE.VOICE);
+        gameVolume.value = gameManager.GetVolume(AudioSystem.SOUND_TYPE.GAME);
         toggleNarrator.IsOn = gameManager.narratorOn;
         narratorSpeed.value = gameManager.narratorSpeed;
     }

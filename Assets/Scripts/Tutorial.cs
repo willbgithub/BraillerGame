@@ -10,13 +10,6 @@ public class Tutorial : MonoBehaviour, IBrailler
 
     [SerializeField] BrailleCell brailleCell;
     [SerializeField] Brailler brailler;
-    [SerializeField] AudioClip[] audioAlphabet;
-    [SerializeField] AudioClip[] audioNumbers;
-    [SerializeField] AudioClip audioExclamationPoint;
-    [SerializeField] AudioClip audioPeriod;
-    [SerializeField] AudioClip audioQuestionMark;
-    [SerializeField] AudioClip audioComma;
-    [SerializeField] AudioSource audioSource;
     [SerializeField] TMP_Text characterLabel;
     [SerializeField] GameObject guide;
     [SerializeField] GameObject escMenu;
@@ -76,6 +69,8 @@ public class Tutorial : MonoBehaviour, IBrailler
     public void Start()
     {
         gameManager = GameManager.Instance;
+        audioSystem = AudioSystem.Instance;
+
         brailleCell.SetIndex(63);
         SetGuide(false);
         SetEscMenu(false);

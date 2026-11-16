@@ -1647,8 +1647,8 @@ MonoBehaviour:
   m_FillRect: {fileID: 2940977656663257946}
   m_HandleRect: {fileID: 13790837842717052}
   m_Direction: 0
-  m_MinValue: 0
-  m_MaxValue: 1
+  m_MinValue: 1
+  m_MaxValue: 3
   m_WholeNumbers: 0
   m_Value: 1
   m_OnValueChanged:
@@ -1917,7 +1917,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Narrator Speed
+  m_text: Voice Speed
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2333,8 +2333,8 @@ RectTransform:
   m_GameObject: {fileID: 7132897593577145070}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 951547759666661890}
   m_Father: {fileID: 0}
@@ -3001,13 +3001,39 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 951547759666661890}
     m_Modifications:
+    - target: {fileID: 575940551606353101, guid: 10dd5fde55214b64792a347b05351a17, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 19.427
+      objectReference: {fileID: 0}
+    - target: {fileID: 575940551606353101, guid: 10dd5fde55214b64792a347b05351a17, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -9.940308
+      objectReference: {fileID: 0}
+    - target: {fileID: 575940551606353101, guid: 10dd5fde55214b64792a347b05351a17, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -9.713497
+      objectReference: {fileID: 0}
     - target: {fileID: 2239358981895573850, guid: 10dd5fde55214b64792a347b05351a17, type: 3}
       propertyPath: m_text
-      value: Narrator
+      value: 'Button
+
+        Narrator'
       objectReference: {fileID: 0}
     - target: {fileID: 2239358981895573850, guid: 10dd5fde55214b64792a347b05351a17, type: 3}
       propertyPath: m_fontSize
-      value: 34.75
+      value: 33.85
+      objectReference: {fileID: 0}
+    - target: {fileID: 2239358981895573850, guid: 10dd5fde55214b64792a347b05351a17, type: 3}
+      propertyPath: m_margin.y
+      value: -18.524841
+      objectReference: {fileID: 0}
+    - target: {fileID: 2239358981895573850, guid: 10dd5fde55214b64792a347b05351a17, type: 3}
+      propertyPath: m_margin.z
+      value: 32.06659
+      objectReference: {fileID: 0}
+    - target: {fileID: 2239358981895573850, guid: 10dd5fde55214b64792a347b05351a17, type: 3}
+      propertyPath: m_HorizontalAlignment
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4327548933751509474, guid: 10dd5fde55214b64792a347b05351a17, type: 3}
       propertyPath: OnValueChanged.m_PersistentCalls.m_Calls.Array.size

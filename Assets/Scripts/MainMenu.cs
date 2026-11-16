@@ -44,31 +44,31 @@ public class MainMenu : MonoBehaviour
     }
     public void Select(int index)
     {
-        GameObject selected = selectables[gameManager.selectedIndex];
+        GameObject selected = selectables[gameManager.menuIndex];
         selected.transform.GetChild(0).gameObject.SetActive(false);
-        gameManager.selectedIndex = index;
-        selected = selectables[gameManager.selectedIndex];
+        gameManager.menuIndex = index;
+        selected = selectables[gameManager.menuIndex];
         selected.transform.GetChild(0).gameObject.SetActive(true);
     }
     public void OnEnterDown()
     {
-        if (gameManager.selectedIndex == 0)
+        if (gameManager.menuIndex == 0)
         {
             OnBraillerTutorialButtonPress();
         }
-        else if (gameManager.selectedIndex == 1)
+        else if (gameManager.menuIndex == 1)
         {
             OnPaperButtonPress();
         }
-        else if (gameManager.selectedIndex == 2)
+        else if (gameManager.menuIndex == 2)
         {
             OnCopyGameButtonPress();
         }
-        else if (gameManager.selectedIndex == 3)
+        else if (gameManager.menuIndex == 3)
         {
             SetEscMenu(true);
         }
-        else if (gameManager.selectedIndex == 4)
+        else if (gameManager.menuIndex == 4)
         {
             OnQuitButtonPress();
         }
@@ -82,23 +82,23 @@ public class MainMenu : MonoBehaviour
     void Start()
     {
         gameManager = GameManager.Instance;
-        Select(gameManager.selectedIndex);
+        Select(gameManager.menuIndex);
         SetEscMenu(false);
     }
     void Update()
     {
         if (keyUpArrow.WasPressedThisFrame())
         {
-            if (gameManager.selectedIndex > 0)
+            if (gameManager.menuIndex > 0)
             {
-                Select(gameManager.selectedIndex - 1);
+                Select(gameManager.menuIndex - 1);
             }
         }
         if (keyDownArrow.WasPressedThisFrame())
         {
-            if (gameManager.selectedIndex < selectables.Length - 1)
+            if (gameManager.menuIndex < selectables.Length - 1)
             {
-                Select(gameManager.selectedIndex + 1);
+                Select(gameManager.menuIndex + 1);
             }
         }
         if (keyEnter.WasPressedThisFrame())
