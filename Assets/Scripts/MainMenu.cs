@@ -11,20 +11,32 @@ public class MainMenu : MonoBehaviour
     InputAction keyDownArrow;
     InputAction keyEnter;
     [SerializeField] GameObject image;
+    [SerializeField] GameObject escMenu;
 
     [SerializeField] GameObject[] selectables;
 
     public void OnBraillerTutorialButtonPress()
     {
         SceneManager.LoadScene("Tutorial");
+        Select(0);
     }
     public void OnPaperButtonPress()
     {
         SceneManager.LoadScene("PaperTest");
+        Select(1);
     }
     public void OnCopyGameButtonPress()
     {
         SceneManager.LoadScene("CopyGame");
+        Select(2);
+    }
+    public void SetEscMenu(bool value)
+    {
+        if (value)
+        {
+            Select(3);
+        }
+        escMenu.SetActive(value);
     }
     public void OnQuitButtonPress()
     {
@@ -54,6 +66,10 @@ public class MainMenu : MonoBehaviour
         }
         else if (gameManager.selectedIndex == 3)
         {
+            SetEscMenu(true);
+        }
+        else if (gameManager.selectedIndex == 4)
+        {
             OnQuitButtonPress();
         }
     }
@@ -67,6 +83,7 @@ public class MainMenu : MonoBehaviour
     {
         gameManager = GameManager.Instance;
         Select(gameManager.selectedIndex);
+        SetEscMenu(false);
     }
     void Update()
     {
