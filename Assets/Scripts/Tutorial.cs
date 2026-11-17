@@ -59,7 +59,6 @@ public class Tutorial : MonoBehaviour, IBrailler
         brailleCell.SetIndex(0);
     }
 
-    
     public void Awake()
     {
         brailler.SetParent(this);
@@ -72,7 +71,10 @@ public class Tutorial : MonoBehaviour, IBrailler
         gameManager = GameManager.Instance;
         audioSystem = AudioSystem.Instance;
 
-        audioSystem.PlaySound(narration, AudioSystem.SOUND_TYPE.VOICE);
+        if (gameManager.narratorOn)
+        {
+            audioSystem.PlaySound(narration, AudioSystem.SOUND_TYPE.NARRATOR);
+        }
         brailleCell.SetIndex(63);
         SetGuide(false);
         SetEscMenu(false);

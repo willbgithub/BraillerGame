@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Collections;
+using System.Collections;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
@@ -11,6 +12,8 @@ using static AudioSystem;
 public class AudioSystem : MonoBehaviour
 {
     // Data
+    bool started = false;
+
     public static AudioSystem Instance;
     GameManager gameManager;
     Dictionary<AudioSource, SOUND_TYPE> audioSources;
@@ -18,7 +21,7 @@ public class AudioSystem : MonoBehaviour
     AudioMixerGroup voiceMixer;
     AudioSource narratorChannel;
     InputAction keyCtrl;
-    public enum SOUND_TYPE { GAME, VOICE, NARRATOR };
+    public enum SOUND_TYPE { IMMUNE, GAME, VOICE, NARRATOR };
 
     int maxChannels = 10;
     Dictionary<char, AudioClip> audioDictionary;
@@ -47,7 +50,7 @@ public class AudioSystem : MonoBehaviour
     {
         for (int i = 0; i < audioSources.Count; i++)
         {
-            if (audioSources.ElementAt(i).Value == SOUND_TYPE.VOICE)
+            if (audioSources.ElementAt(i).Value == SOUND_TYPE.NARRATOR)
             {
                 audioSources.ElementAt(i).Key.Stop();
             }
@@ -76,6 +79,10 @@ public class AudioSystem : MonoBehaviour
             {
                 audioSource.pitch = gameManager.narratorSpeed;
             }
+        }
+        if (narratorChannel.IsUnityNull())
+        {
+            return;
         }
         if (!gameManager.narratorOn)
         {
@@ -135,11 +142,19 @@ public class AudioSystem : MonoBehaviour
             {'?', AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Sounds/other/questionMark.mp3")},
         };
     }
-    public void PlaySound(AudioClip sound, SOUND_TYPE soundType)
+    public void PlaySound(AudioClip sound, SOUND_TYPE soundType, float delay = 0)
     {
-        //Debug.Log($"PlaySound({sound}, {soundType})");
-
-        ////Determine volume
+        if (!started)
+        {
+            Start();
+        }
+        if (delay > 0)
+        {
+            StartCoroutine(PlaySoundDelay(sound, soundType, delay));
+        }
+        ////Debug.Log($"PlaySound({sound}, {soundType})");
+        
+        //Determine volume
         //Debug.Log($"gameManager: {gameManager}");
         //Debug.Log($"gameManager.masterVolume: {gameManager.masterVolume}");
         //Debug.Log($"gameManager.soundSettings[soundType]: {gameManager.GetVolume(soundType)}");
@@ -158,6 +173,45 @@ public class AudioSystem : MonoBehaviour
             PlaySound(sound, volume, 1f, soundType);
         }
     }
+    IEnumerator PlaySoundDelay(AudioClip sound, SOUND_TYPE soundType, float delay)
+    {
+        if (delay > 0)
+        {
+            yield return new WaitForSeconds(delay);
+        }
+
+        PlaySound(sound, soundType);
+    }
+    public void PlaySound(AudioClip sound, float volume, float speed, SOUND_TYPE soundType, float delay = 0)
+    {
+        if (delay > 0)
+        {
+            StartCoroutine(PlaySoundDelay(sound, volume, speed, soundType, delay));
+        }
+        //Debug.Log($"PlaySound({sound}, {volume}, {speed})");
+        AudioSource audioSource = GetAvailableSource(soundType);
+        //Debug.Log($"audioSource: {audioSource}");
+        audioSource.resource = sound;
+        audioSource.volume = volume;
+        audioSource.pitch = speed;
+        if (soundType == SOUND_TYPE.GAME || soundType == SOUND_TYPE.IMMUNE)
+        {
+            audioSource.outputAudioMixerGroup = gameMixer;
+        }
+        else if (soundType == SOUND_TYPE.VOICE || soundType == SOUND_TYPE.NARRATOR)
+        {
+            audioSource.outputAudioMixerGroup = voiceMixer;
+        }
+        audioSource.Play();
+    }
+    IEnumerator PlaySoundDelay(AudioClip sound, float volume, float speed, SOUND_TYPE soundType, float delay)
+    {
+        if (delay > 0)
+        {
+            yield return new WaitForSeconds(delay);
+        }
+        PlaySound(sound, volume, speed, soundType, delay);
+    }
     public void PlayCharacterAudio(char character)
     {
         character = char.ToLower(character);
@@ -174,28 +228,10 @@ public class AudioSystem : MonoBehaviour
             Debug.LogError($"ERROR: No audio found for '{character}'!");
         }
     }
-    public void PlaySound(AudioClip sound, float volume, float speed, SOUND_TYPE soundType)
-    {
-        //Debug.Log($"PlaySound({sound}, {volume}, {speed})");
-        AudioSource audioSource = GetAvailableSource(soundType);
-        //Debug.Log($"audioSource: {audioSource}");
-        audioSource.resource = sound;
-        audioSource.volume = volume;
-        audioSource.pitch = speed;
-        if (soundType == SOUND_TYPE.GAME)
-        {
-            audioSource.outputAudioMixerGroup = gameMixer;
-        }
-        else if (soundType == SOUND_TYPE.VOICE || soundType == SOUND_TYPE.NARRATOR)
-        {
-            audioSource.outputAudioMixerGroup = voiceMixer;
-        }
-        audioSource.Play();
-    }
     public AudioSource GetAvailableSource(SOUND_TYPE soundType)
     {
-        ////Debug.Log($"audioSources: {audioSources}");
-        ////Debug.Log($"audioSources.Count: {audioSources.Count}");
+        //////Debug.Log($"audioSources: {audioSources}");
+        //////Debug.Log($"audioSources.Count: {audioSources.Count}");
         if (soundType == SOUND_TYPE.NARRATOR)
         {
             if (narratorChannel.IsUnityNull())
@@ -256,6 +292,11 @@ public class AudioSystem : MonoBehaviour
     }
     void Start()
     {
+        if (started)
+        {
+            return;
+        }
+        started = true;
         gameManager = GameManager.Instance;
 
         gameMixer = (Resources.Load("Game") as AudioMixer).FindMatchingGroups("Master")[0];

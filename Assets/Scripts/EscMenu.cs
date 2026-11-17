@@ -28,6 +28,10 @@ public class EscMenu : MonoBehaviour
     [SerializeField] Toggle toggleNarrator;
     [SerializeField] Slider narratorSpeed;
     [SerializeField] Button quitButton;
+    [SerializeField] AudioClip audioClick;
+
+    const float TIME_BETWEEN_CLICKS = 0.08f;
+    float clickTimer = 0;
     public void OnMasterVolumeValueChange(float value)
     {
         gameManager.masterVolume = value;
@@ -118,43 +122,57 @@ public class EscMenu : MonoBehaviour
                 Select(selectedIndex + 1, false);
             }
         }
-        if (keyLeftArrow.IsPressed())
+        if (keyLeftArrow.IsPressed() || keyRightArrow.IsPressed())
         {
+            bool playSound = false;
+            if (clickTimer <= 0)
+            {
+                clickTimer = TIME_BETWEEN_CLICKS;
+                playSound = true;
+            }
+            else
+            {
+                clickTimer -= Time.deltaTime;
+            }
+
+            int sign = 1;
+            if (keyLeftArrow.IsPressed())
+            {
+                sign = -1;
+            }
             if (selectedIndex == 0)
             {
-                masterVolume.value -= Time.deltaTime;
+                masterVolume.value += Time.deltaTime*sign;
+                if (playSound)
+                {
+                    audioSystem.PlaySound(audioClick, masterVolume.value, 1f, AudioSystem.SOUND_TYPE.IMMUNE);
+                }
             }
             else if (selectedIndex == 1)
             {
-                voiceVolume.value -= Time.deltaTime;
+                voiceVolume.value += Time.deltaTime * sign;
+                if (playSound)
+                {
+                    audioSystem.PlaySound(audioClick, voiceVolume.value, 1f, AudioSystem.SOUND_TYPE.IMMUNE);
+                }
             }
             else if (selectedIndex == 2)
             {
-                gameVolume.value -= Time.deltaTime;
+                gameVolume.value += Time.deltaTime * sign;
+                if (playSound)
+                {
+                    audioSystem.PlaySound(audioClick, gameVolume.value, 1f, AudioSystem.SOUND_TYPE.IMMUNE);
+                }
             }
             else if (selectedIndex == 4)
             {
-                narratorSpeed.value -= Time.deltaTime*2;
+                narratorSpeed.value += Time.deltaTime*2 * sign;
+                if (playSound)
+                {
+                    audioSystem.PlayCharacterAudio('a');
+                }
             }
-        }
-        if (keyRightArrow.IsPressed())
-        {
-            if (selectedIndex == 0)
-            {
-                masterVolume.value += Time.deltaTime;
-            }
-            else if (selectedIndex == 1)
-            {
-                voiceVolume.value += Time.deltaTime;
-            }
-            else if (selectedIndex == 2)
-            {
-                gameVolume.value += Time.deltaTime;
-            }
-            else if (selectedIndex == 4)
-            {
-                narratorSpeed.value += Time.deltaTime*2;
-            }
+            
         }
         if (keyEnter.WasPressedThisFrame())
         {

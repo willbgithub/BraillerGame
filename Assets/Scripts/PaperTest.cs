@@ -42,7 +42,7 @@ public class Game : MonoBehaviour, IBrailler
 
     public void SetAudioEnabled(bool value)
     {
-        gameManager.paperTestAudioOn = value;
+        gameManager.PaperTestAudioOn = value;
     }
     public void SetEscMenu(bool value)
     {
@@ -150,7 +150,7 @@ public class Game : MonoBehaviour, IBrailler
     {
         gameManager = GameManager.Instance;
         audioSystem = AudioSystem.Instance;
-        audioToggle.IsOn = gameManager.paperTestAudioOn;
+        audioToggle.IsOn = gameManager.PaperTestAudioOn;
         Select(0, false);
         SetGuide(false);
         SetEscMenu(false);

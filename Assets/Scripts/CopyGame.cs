@@ -72,9 +72,14 @@ public class ReactionGame : MonoBehaviour, IBrailler
     {
         SetGuide(!guide.activeSelf);
     }
-    public void ShowCopyCell(bool value)
+    public void OnToggleShowCopyCellValueChanged(bool value)
     {
+        gameManager.ShowCopyCell = value;
         brailleCellCopy.Hide(!value);
+    }
+    public void OnToggleLetterModeValueChanged(bool value)
+    {
+        gameManager.LetterMode = value;
     }
     public void Score(bool scored)
     {
@@ -240,8 +245,9 @@ public class ReactionGame : MonoBehaviour, IBrailler
         SetEscMenu(false);
         SetGuide(false);
         brailleCellCopy.SetBackgroundColor(colorDefault);
-        ShowCopyCell(toggleShowCopyCell.IsOn);
-        StartCoroutine(StartRound(0));
+        toggleLetterMode.IsOn = gameManager.LetterMode;
+        toggleShowCopyCell.IsOn = gameManager.ShowCopyCell;
+        StartCoroutine(StartRound(1));
     }
 
     void Update()

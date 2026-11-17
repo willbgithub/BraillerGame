@@ -9,10 +9,11 @@ CAVE GAME
 
 COPY GAME
 	TODO
-		- Sliders in ESC menu should do the undertale thing
-		- Remember settings when you close game
+		- Pop-up tutorial for copygame and paper test when you open them for the first time
 
 	Completed
+		- Remember settings when you close game
+		- Sliders in ESC menu audibly click when moving
 		- Narrator
 		- keyboard-controlled esc menu
 		- fixed Toggle object's UI scaling
