@@ -25,4 +25,8 @@ public class Toggle : MonoBehaviour
     {
         IsOn = !isOn;
     }
+    public void ToggleValue()
+    {
+        IsOn = !isOn;
+    }
 }

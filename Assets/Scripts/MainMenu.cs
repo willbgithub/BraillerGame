@@ -2,10 +2,13 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
+using System.Linq;
 
 public class MainMenu : MonoBehaviour
 {
     GameManager gameManager;
+    AudioSystem audioSystem;
 
     InputAction keyUpArrow;
     InputAction keyDownArrow;
@@ -13,28 +16,31 @@ public class MainMenu : MonoBehaviour
     [SerializeField] GameObject image;
     [SerializeField] GameObject escMenu;
 
-    [SerializeField] GameObject[] selectables;
+    // Accessible UI
+    [SerializeField] GameObject[] selectableObjects;
+    [SerializeField] AudioClip[] selectableNarrator;
+    Dictionary<GameObject, AudioClip> selectables;
 
     public void OnBraillerTutorialButtonPress()
     {
         SceneManager.LoadScene("Tutorial");
-        Select(0);
+        Select(0, true);
     }
     public void OnPaperButtonPress()
     {
         SceneManager.LoadScene("PaperTest");
-        Select(1);
+        Select(1, true);
     }
     public void OnCopyGameButtonPress()
     {
         SceneManager.LoadScene("CopyGame");
-        Select(2);
+        Select(2, true);
     }
     public void SetEscMenu(bool value)
     {
         if (value)
         {
-            Select(3);
+            Select(3, true);
         }
         escMenu.SetActive(value);
     }
@@ -42,13 +48,17 @@ public class MainMenu : MonoBehaviour
     {
         Application.Quit();
     }
-    public void Select(int index)
+    public void Select(int index, bool silent)
     {
-        GameObject selected = selectables[gameManager.menuIndex];
+        GameObject selected = selectables.ElementAt(gameManager.menuIndex).Key;
         selected.transform.GetChild(0).gameObject.SetActive(false);
         gameManager.menuIndex = index;
-        selected = selectables[gameManager.menuIndex];
+        selected = selectables.ElementAt(gameManager.menuIndex).Key;
         selected.transform.GetChild(0).gameObject.SetActive(true);
+        if (gameManager.narratorOn && !silent)
+        {
+            audioSystem.PlaySound(selectables.ElementAt(gameManager.menuIndex).Value, AudioSystem.SOUND_TYPE.NARRATOR);
+        }
     }
     public void OnEnterDown()
     {
@@ -78,30 +88,39 @@ public class MainMenu : MonoBehaviour
         keyUpArrow = InputSystem.actions.FindAction("UpArrow");
         keyDownArrow = InputSystem.actions.FindAction("DownArrow");
         keyEnter = InputSystem.actions.FindAction("Enter");
+
+        // Assign dictionary
+        selectables = new Dictionary<GameObject, AudioClip>();
+        for (int i = 0; i < selectableObjects.Length; i++)
+        {
+            selectables[selectableObjects[i]] = selectableNarrator[i];
+        }
     }
     void Start()
     {
         gameManager = GameManager.Instance;
-        Select(gameManager.menuIndex);
+        audioSystem = AudioSystem.Instance;
+
+        Select(gameManager.menuIndex, false);
         SetEscMenu(false);
     }
     void Update()
     {
-        if (keyUpArrow.WasPressedThisFrame())
+        if (keyUpArrow.WasPressedThisFrame() && !escMenu.activeSelf)
         {
             if (gameManager.menuIndex > 0)
             {
-                Select(gameManager.menuIndex - 1);
+                Select(gameManager.menuIndex - 1, false);
             }
         }
-        if (keyDownArrow.WasPressedThisFrame())
+        if (keyDownArrow.WasPressedThisFrame() && !escMenu.activeSelf)
         {
-            if (gameManager.menuIndex < selectables.Length - 1)
+            if (gameManager.menuIndex < selectables.Count - 1)
             {
-                Select(gameManager.menuIndex + 1);
+                Select(gameManager.menuIndex + 1, false);
             }
         }
-        if (keyEnter.WasPressedThisFrame())
+        if (keyEnter.WasPressedThisFrame() && !escMenu.activeSelf)
         {
             OnEnterDown();
         }

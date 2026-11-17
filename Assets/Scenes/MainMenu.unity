@@ -2388,12 +2388,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   image: {fileID: 1911109794}
   escMenu: {fileID: 147636823}
-  selectables:
+  selectableObjects:
   - {fileID: 1864165091}
   - {fileID: 626531164}
   - {fileID: 500315596}
   - {fileID: 242557607}
   - {fileID: 1141391256}
+  selectableNarrator:
+  - {fileID: 8300000, guid: 405ca0c70a91fdc4abcdd8d51d9f7df0, type: 3}
+  - {fileID: 8300000, guid: 3cc5b5d5c5ff60343845c45764b85607, type: 3}
+  - {fileID: 8300000, guid: 13d6ebcfa033d244f93b8f74b9a25e98, type: 3}
+  - {fileID: 8300000, guid: 59a5ca47dc1a2e84ebdcb9ff09343c59, type: 3}
+  - {fileID: 8300000, guid: d8894d86c70ff884eb7fe5185b1f4846, type: 3}
 --- !u!224 &1748425066
 RectTransform:
   m_ObjectHideFlags: 0

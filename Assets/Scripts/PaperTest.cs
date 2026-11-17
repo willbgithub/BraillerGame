@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -10,7 +12,10 @@ public class Game : MonoBehaviour, IBrailler
     AudioSystem audioSystem;
 
     // Data
-    [SerializeField] GameObject[] selectables;
+    // Accessible UI
+    [SerializeField] GameObject[] selectableObjects;
+    [SerializeField] AudioClip[] selectableNarrator;
+    Dictionary<GameObject, AudioClip> selectables;
     int selectedIndex;
 
     int scrollToBottom = 0;
@@ -101,19 +106,27 @@ public class Game : MonoBehaviour, IBrailler
         }
     }
 
-    public void Select(int index)
+    public void Select(int index, bool silent)
     {
-        GameObject selected = selectables[selectedIndex];
+        GameObject selected = selectables.ElementAt(selectedIndex).Key;
         selected.transform.GetChild(0).gameObject.SetActive(false);
+        selected = selectables.ElementAt(index).Key;
         selectedIndex = index;
-        selected = selectables[selectedIndex];
         selected.transform.GetChild(0).gameObject.SetActive(true);
+        if (gameManager.narratorOn && !silent)
+        {
+            audioSystem.PlaySound(selectables.ElementAt(index).Value, AudioSystem.SOUND_TYPE.NARRATOR);
+        }
     }
     public void OnEnterDown()
     {
         if (selectedIndex == 0)
         {
             OnClearButtonPress();
+        }
+        else if (selectedIndex == 1)
+        {
+            audioToggle.ToggleValue();
         }
     }
     void Awake()
@@ -125,13 +138,20 @@ public class Game : MonoBehaviour, IBrailler
         keyGuide = InputSystem.actions.FindAction("Guide");
         keyEsc = InputSystem.actions.FindAction("Esc");
         textLabel.text = "";
+
+        // Assign dictionary
+        selectables = new Dictionary<GameObject, AudioClip>();
+        for (int i = 0; i < selectableObjects.Length; i++)
+        {
+            selectables[selectableObjects[i]] = selectableNarrator[i];
+        }
     }
     void Start()
     {
         gameManager = GameManager.Instance;
         audioSystem = AudioSystem.Instance;
         audioToggle.IsOn = gameManager.paperTestAudioOn;
-        Select(0);
+        Select(0, false);
         SetGuide(false);
         SetEscMenu(false);
     }
@@ -141,21 +161,21 @@ public class Game : MonoBehaviour, IBrailler
         {
             ToggleGuide();
         }
-        if (keyUpArrow.WasPressedThisFrame())
+        if (keyUpArrow.WasPressedThisFrame() && !escMenu.activeSelf)
         {
             if (selectedIndex > 0)
             {
-                Select(selectedIndex - 1);
+                Select(selectedIndex - 1, false);
             }
         }
-        if (keyDownArrow.WasPressedThisFrame())
+        if (keyDownArrow.WasPressedThisFrame() && !escMenu.activeSelf)
         {
-            if (selectedIndex < selectables.Length - 1)
+            if (selectedIndex < selectables.Count - 1)
             {
-                Select(selectedIndex + 1);
+                Select(selectedIndex + 1, false);
             }
         }
-        if (keyEnter.WasPressedThisFrame())
+        if (keyEnter.WasPressedThisFrame() && !escMenu.activeSelf)
         {
             OnEnterDown();
         }

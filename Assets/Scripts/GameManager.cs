@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
     {
         { AudioSystem.SOUND_TYPE.GAME, 1f },
         { AudioSystem.SOUND_TYPE.VOICE, 1f },
+        { AudioSystem.SOUND_TYPE.NARRATOR, 1f },
     };
 
     public float masterVolume
@@ -35,7 +36,15 @@ public class GameManager : MonoBehaviour
     }
     public void SetVolume(AudioSystem.SOUND_TYPE soundType, float value)
     {
-        soundSettings[soundType] = value;
+        if (soundType == AudioSystem.SOUND_TYPE.VOICE || soundType == AudioSystem.SOUND_TYPE.NARRATOR)
+        {
+            soundSettings[AudioSystem.SOUND_TYPE.VOICE] = value;
+            soundSettings[AudioSystem.SOUND_TYPE.NARRATOR] = value;
+        }
+        else
+        {
+            soundSettings[soundType] = value;
+        }
         if (!audioSystem.IsUnityNull())
         {
             audioSystem.OnSoundSettingsUpdate();

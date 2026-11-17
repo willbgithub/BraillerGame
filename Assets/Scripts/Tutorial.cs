@@ -13,6 +13,7 @@ public class Tutorial : MonoBehaviour, IBrailler
     [SerializeField] TMP_Text characterLabel;
     [SerializeField] GameObject guide;
     [SerializeField] GameObject escMenu;
+    [SerializeField] AudioClip narration;
     InputAction keyEnter;
     InputAction keyGuide;
     InputAction keyEsc;
@@ -71,6 +72,7 @@ public class Tutorial : MonoBehaviour, IBrailler
         gameManager = GameManager.Instance;
         audioSystem = AudioSystem.Instance;
 
+        audioSystem.PlaySound(narration, AudioSystem.SOUND_TYPE.VOICE);
         brailleCell.SetIndex(63);
         SetGuide(false);
         SetEscMenu(false);

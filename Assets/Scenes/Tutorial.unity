@@ -261,6 +261,7 @@ MonoBehaviour:
   characterLabel: {fileID: 1919239806}
   guide: {fileID: 257978554}
   escMenu: {fileID: 1849955575}
+  narration: {fileID: 8300000, guid: 4c1bb42ebb322894081e2523652beeff, type: 3}
 --- !u!4 &200196422
 Transform:
   m_ObjectHideFlags: 0

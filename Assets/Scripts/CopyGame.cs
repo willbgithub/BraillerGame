@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -21,7 +22,10 @@ public class ReactionGame : MonoBehaviour, IBrailler
     InputAction keyEnter;
     InputAction keyEsc;
 
-    [SerializeField] GameObject[] selectables;
+    // Accessible UI
+    [SerializeField] GameObject[] selectableObjects;
+    [SerializeField] AudioClip[] selectableNarrator;
+    Dictionary<GameObject, AudioClip> selectables;
     int selectedIndex;
 
     bool audioQueuePlaying = false;
@@ -160,7 +164,7 @@ public class ReactionGame : MonoBehaviour, IBrailler
         {
             labelFeedback.text = "CORRECT!";
             brailleCellInput.SetBackgroundColor(colorCorrect);
-            audioSystem.PlaySound(audioCorrect, AudioSystem.SOUND_TYPE.GAME);
+            audioSystem.PlaySound(audioCorrect, 0.45f, 1f, AudioSystem.SOUND_TYPE.GAME);
             Score(true);
             StartCoroutine(StartRound(1));
         }
@@ -186,13 +190,17 @@ public class ReactionGame : MonoBehaviour, IBrailler
     {
         StartCoroutine(PlayBrailleAudio(brailleCellCopy.GetIndex()));
     }
-    public void Select(int index)
+    public void Select(int index, bool silent)
     {
-        GameObject selected = selectables[selectedIndex];
+        GameObject selected = selectables.ElementAt(selectedIndex).Key;
         selected.transform.GetChild(0).gameObject.SetActive(false);
+        selected = selectables.ElementAt(index).Key;
         selectedIndex = index;
-        selected = selectables[selectedIndex];
         selected.transform.GetChild(0).gameObject.SetActive(true);
+        if (gameManager.narratorOn && !silent)
+        {
+            audioSystem.PlaySound(selectables.ElementAt(index).Value, AudioSystem.SOUND_TYPE.NARRATOR);
+        }
     }
     public void OnEnterDown()
     {
@@ -209,21 +217,26 @@ public class ReactionGame : MonoBehaviour, IBrailler
     // Other
     void Awake()
     {
-        
-
         brailler.SetParent(this);
         keyUpArrow = InputSystem.actions.FindAction("UpArrow");
         keyDownArrow = InputSystem.actions.FindAction("DownArrow");
         keyEnter = InputSystem.actions.FindAction("Enter");
         keyGuide = InputSystem.actions.FindAction("Guide");
         keyEsc = InputSystem.actions.FindAction("Esc");
+
+        // Assign dictionary
+        selectables = new Dictionary<GameObject, AudioClip>();
+        for (int i = 0; i < selectableObjects.Length; i++)
+        {
+            selectables[selectableObjects[i]] = selectableNarrator[i];
+        }
     }
     void Start()
     {
         gameManager = GameManager.Instance;
         audioSystem = AudioSystem.Instance;
         
-        Select(0);
+        Select(0, false);
         SetEscMenu(false);
         SetGuide(false);
         brailleCellCopy.SetBackgroundColor(colorDefault);
@@ -245,21 +258,21 @@ public class ReactionGame : MonoBehaviour, IBrailler
         }
 
         // Controls
-        if (keyUpArrow.WasPressedThisFrame())
+        if (keyUpArrow.WasPressedThisFrame() && !escMenu.activeSelf)
         {
             if (selectedIndex > 0)
             {
-                Select(selectedIndex - 1);
+                Select(selectedIndex - 1, false);
             }
         }
-        if (keyDownArrow.WasPressedThisFrame())
+        if (keyDownArrow.WasPressedThisFrame() && !escMenu.activeSelf)
         {
-            if (selectedIndex < selectables.Length - 1)
+            if (selectedIndex < selectables.Count - 1)
             {
-                Select(selectedIndex + 1);
+                Select(selectedIndex + 1, false);
             }
         }
-        if (keyEnter.WasPressedThisFrame())
+        if (keyEnter.WasPressedThisFrame() && !escMenu.activeSelf)
         {
             OnEnterDown();
         }

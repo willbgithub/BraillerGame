@@ -9,14 +9,14 @@ CAVE GAME
 
 COPY GAME
 	TODO
-		- Narrator mode
-			- ask for setting when you open the game
-			- toggle with N
-			- ctrl mutes
-			- adjustable speed
+		- Sliders in ESC menu should do the undertale thing
 		- Remember settings when you close game
 
 	Completed
+		- Narrator
+		- keyboard-controlled esc menu
+		- fixed Toggle object's UI scaling
+		- brailler plays different key noise if output is disabled
 	    - audio setting on paper test
 		- adjustable volumes
 		- adjustable voice speed

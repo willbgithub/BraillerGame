@@ -74,7 +74,6 @@ public class Brailler : MonoBehaviour
     }
     public void OnBackspaceDown()
     {
-        keyBackspace.OnDown();
         if (outputEnabled)
         {
             parent.OnBackspaceDown();
@@ -86,7 +85,6 @@ public class Brailler : MonoBehaviour
     }
     public void OnSpaceDown()
     {
-        keySpace.OnDown();
         if (outputEnabled)
         {
             parent.OnSpaceDown();
@@ -128,7 +126,7 @@ public class Brailler : MonoBehaviour
         bool keyPressed = false;
         if (inputEnabled && key0Input.WasPressedThisFrame())
         {
-            keys[0].OnDown();
+            keys[0].OnDown(outputEnabled);
             pressedKeys[keys[0]] = true;
             keyPressed = true;
         }
@@ -138,7 +136,7 @@ public class Brailler : MonoBehaviour
         }
         if (inputEnabled && key1Input.WasPressedThisFrame())
         {
-            keys[1].OnDown();
+            keys[1].OnDown(outputEnabled);
             pressedKeys[keys[1]] = true;
             keyPressed = true;
         }
@@ -148,7 +146,7 @@ public class Brailler : MonoBehaviour
         }
         if (inputEnabled && key2Input.WasPressedThisFrame())
         {
-            keys[2].OnDown();
+            keys[2].OnDown(outputEnabled);
             pressedKeys[keys[2]] = true;
             keyPressed = true;
         }
@@ -158,7 +156,7 @@ public class Brailler : MonoBehaviour
         }
         if (inputEnabled && keySpaceInput.WasPressedThisFrame())
         {
-            keySpace.OnDown();
+            keySpace.OnDown(outputEnabled);
             counting = false;
             timer = 0;
             OnSpaceDown();
@@ -169,7 +167,7 @@ public class Brailler : MonoBehaviour
         }
         if (inputEnabled && key3Input.WasPressedThisFrame())
         {
-            keys[3].OnDown();
+            keys[3].OnDown(outputEnabled);
             pressedKeys[keys[3]] = true;
             keyPressed = true;
         }
@@ -179,7 +177,7 @@ public class Brailler : MonoBehaviour
         }
         if (inputEnabled && key4Input.WasPressedThisFrame())
         {
-            keys[4].OnDown();
+            keys[4].OnDown(outputEnabled);
             pressedKeys[keys[4]] = true;
             keyPressed = true;
         }
@@ -189,7 +187,7 @@ public class Brailler : MonoBehaviour
         }
         if (inputEnabled && key5Input.WasPressedThisFrame())
         {
-            keys[5].OnDown();
+            keys[5].OnDown(outputEnabled);
             pressedKeys[keys[5]] = true;
             keyPressed = true;
         }
@@ -199,6 +197,7 @@ public class Brailler : MonoBehaviour
         }
         if (inputEnabled && keyBackspaceInput.WasPressedThisFrame())
         {
+            keyBackspace.OnDown(outputEnabled);
             OnBackspaceDown();
         }
         else if (inputEnabled && keyBackspaceInput.WasReleasedThisFrame())

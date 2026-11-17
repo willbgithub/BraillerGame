@@ -94,6 +94,7 @@ MonoBehaviour:
   background: {fileID: 5092356412397782108}
   label: {fileID: 7520083954116919659}
   audioKeyPress: {fileID: 8300000, guid: 6d720ce118237d746b78e4721765fa66, type: 3}
+  audioKeyPressFail: {fileID: 8300000, guid: 35b21ab2b7fc30c469334013d87aca49, type: 3}
 --- !u!1 &3230906743062559565
 GameObject:
   m_ObjectHideFlags: 0

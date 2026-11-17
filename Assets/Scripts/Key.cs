@@ -13,11 +13,19 @@ public class Key : MonoBehaviour
     [SerializeField] Image background;
     [SerializeField] TMP_Text label;
     [SerializeField] AudioClip audioKeyPress;
+    [SerializeField] AudioClip audioKeyPressFail;
 
-    public void OnDown()
+    public void OnDown(bool outputEnabled)
     {
         background.color = pressedColor;
-        audioSystem.PlaySound(audioKeyPress, AudioSystem.SOUND_TYPE.GAME);
+        if (outputEnabled)
+        {
+            audioSystem.PlaySound(audioKeyPress, AudioSystem.SOUND_TYPE.GAME);
+        }
+        else
+        {
+            audioSystem.PlaySound(audioKeyPressFail, AudioSystem.SOUND_TYPE.GAME);
+        }
     }
     public void OnUp()
     {
