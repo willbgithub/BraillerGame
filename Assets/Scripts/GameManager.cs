@@ -67,6 +67,12 @@ public class GameManager : MonoBehaviour
         get { return paperTestAudioOn; }
         set { paperTestAudioOn = value; PlayerPrefs.SetInt("paperTestAudioOn", value ? 1 : 0); }
     }
+    public bool paperTestTutorialSeen = false;
+    public bool PaperTestTutorialSeen
+    {
+        get { return paperTestTutorialSeen; }
+        set { paperTestTutorialSeen = value; PlayerPrefs.SetInt("paperTestTutorialSeen", value ? 1 : 0); }
+    }
 
     // Copy game
     bool letterMode = true;
@@ -80,6 +86,14 @@ public class GameManager : MonoBehaviour
     {
         get { return showCopyCell; }
         set { showCopyCell = value; PlayerPrefs.SetInt("showCopyCell", value ? 1 : 0); }
+    }
+    public bool copyGameTutorialSeen = false;
+    public bool CopyGameTutorialSeen
+    {
+        get { return copyGameTutorialSeen; }
+        set { copyGameTutorialSeen = value; PlayerPrefs.SetInt("copyGameTutorialSeen", value ? 1 : 0);
+            Debug.Log("copyGameTutorialSeen set to " + value);
+        }
     }
 
     // Built-in
@@ -106,6 +120,8 @@ public class GameManager : MonoBehaviour
         narratorOn = PlayerPrefs.GetInt("narratorOn", 1) != 0;
 
         paperTestAudioOn = PlayerPrefs.GetInt("paperTestAudioOn", 1) != 0;
+        copyGameTutorialSeen = PlayerPrefs.GetInt("copyGameTutorialSeen", 0) != 0;
+        paperTestTutorialSeen = PlayerPrefs.GetInt("paperTestTutorialSeen", 0) != 0;
         letterMode = PlayerPrefs.GetInt("letterMode", 1) != 0;
         showCopyCell = PlayerPrefs.GetInt("showCopyCell", 1) != 0;
     }

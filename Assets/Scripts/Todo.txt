@@ -9,9 +9,11 @@ CAVE GAME
 
 COPY GAME
 	TODO
+		- More sounds for everything
 		- Pop-up tutorial for copygame and paper test when you open them for the first time
 
 	Completed
+		- Toggle uses narrator
 		- Remember settings when you close game
 		- Sliders in ESC menu audibly click when moving
 		- Narrator

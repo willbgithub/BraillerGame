@@ -28,6 +28,8 @@ public class ReactionGame : MonoBehaviour, IBrailler
     Dictionary<GameObject, AudioClip> selectables;
     int selectedIndex;
 
+    bool tutorialOpen = false;
+
     bool audioQueuePlaying = false;
     float audioQueueTimer = 0;
 
@@ -38,6 +40,7 @@ public class ReactionGame : MonoBehaviour, IBrailler
     // Serialized Objects
     [SerializeField] GameObject guide;
     [SerializeField] GameObject escMenu;
+    [SerializeField] GameObject tutorial;
     [SerializeField] Toggle toggleLetterMode;
     [SerializeField] Toggle toggleShowCopyCell;
     [SerializeField] Brailler brailler;
@@ -49,13 +52,32 @@ public class ReactionGame : MonoBehaviour, IBrailler
     [SerializeField] TMP_Text labelCopyLetter;
     [SerializeField] AudioClip audioCorrect;
     [SerializeField] AudioClip audioWrong;
-
+    [SerializeField] AudioClip audioTutorial;
 
     public void OnBackButtonPress()
     {
         SceneManager.LoadScene("MainMenu");
     }
     // Game
+    public void ShowTutorial(bool value)
+    {
+        tutorialOpen = value;
+        tutorial.SetActive(value);
+        if (value)
+        {
+            selectables.ElementAt(selectedIndex).Key.transform.GetChild(0).gameObject.SetActive(false);
+            audioSystem.PlaySound(audioTutorial, AudioSystem.SOUND_TYPE.NARRATOR);
+        }
+        else
+        {
+            if (!gameManager.copyGameTutorialSeen)
+            {
+                gameManager.copyGameTutorialSeen = true;
+                StartCoroutine(StartRound(1));
+            }
+            Select(selectedIndex, false);
+        }
+    }
     public void SetEscMenu(bool value)
     {
         escMenu.SetActive(value);
@@ -209,11 +231,21 @@ public class ReactionGame : MonoBehaviour, IBrailler
     }
     public void OnEnterDown()
     {
+        if (tutorialOpen)
+        {
+            ShowTutorial(false);
+            return;
+        }
+
         if (selectedIndex == 0)
+        {
+            ShowTutorial(true);
+        }
+        else if (selectedIndex == 1)
         {
             toggleLetterMode.IsOn = !toggleLetterMode.IsOn;
         }
-        else if (selectedIndex == 1)
+        else if (selectedIndex == 2)
         {
             toggleShowCopyCell.IsOn = !toggleShowCopyCell.IsOn;
         }
@@ -240,14 +272,21 @@ public class ReactionGame : MonoBehaviour, IBrailler
     {
         gameManager = GameManager.Instance;
         audioSystem = AudioSystem.Instance;
-        
-        Select(0, false);
         SetEscMenu(false);
         SetGuide(false);
         brailleCellCopy.SetBackgroundColor(colorDefault);
         toggleLetterMode.IsOn = gameManager.LetterMode;
         toggleShowCopyCell.IsOn = gameManager.ShowCopyCell;
-        StartCoroutine(StartRound(1));
+        if (!gameManager.copyGameTutorialSeen)
+        {
+            ShowTutorial(true);
+        }
+        else
+        {
+            ShowTutorial(false);
+            Select(0, false);
+            StartCoroutine(StartRound(1));
+        }
     }
 
     void Update()
@@ -264,14 +303,14 @@ public class ReactionGame : MonoBehaviour, IBrailler
         }
 
         // Controls
-        if (keyUpArrow.WasPressedThisFrame() && !escMenu.activeSelf)
+        if (keyUpArrow.WasPressedThisFrame() && !escMenu.activeSelf && !tutorialOpen)
         {
             if (selectedIndex > 0)
             {
                 Select(selectedIndex - 1, false);
             }
         }
-        if (keyDownArrow.WasPressedThisFrame() && !escMenu.activeSelf)
+        if (keyDownArrow.WasPressedThisFrame() && !escMenu.activeSelf && !tutorialOpen)
         {
             if (selectedIndex < selectables.Count - 1)
             {
