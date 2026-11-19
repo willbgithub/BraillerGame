@@ -21,7 +21,11 @@ public class Toggle : MonoBehaviour
             isOn = value;
             checkmark.SetActive(value);
             OnValueChanged.Invoke(value);
-            if (gameManager.narratorOn)
+            if (gameManager.IsUnityNull())
+            {
+                return;
+            }
+            if (gameManager.narratorOn) 
             {
                 if (value)
                 {

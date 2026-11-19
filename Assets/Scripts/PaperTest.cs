@@ -16,7 +16,8 @@ public class Game : MonoBehaviour, IBrailler
     [SerializeField] GameObject[] selectableObjects;
     [SerializeField] AudioClip[] selectableNarrator;
     Dictionary<GameObject, AudioClip> selectables;
-    int selectedIndex;
+    int selectedIndex = 0;
+    bool tutorialOpen = false;
 
     int scrollToBottom = 0;
         
@@ -32,6 +33,7 @@ public class Game : MonoBehaviour, IBrailler
     [SerializeField] BrailleCell brailleCellPrefab;
     [SerializeField] Transform paperContent;
     [SerializeField] GameObject guide;
+    [SerializeField] GameObject tutorial;
     [SerializeField] GameObject escMenu;
     [SerializeField] ScrollRect scrollView;
     [SerializeField] ScrollRect textScrollView;
@@ -39,6 +41,7 @@ public class Game : MonoBehaviour, IBrailler
     [SerializeField] Toggle audioToggle;
 
     [SerializeField] AudioClip testSound;
+    [SerializeField] AudioClip audioTutorial;
 
     public void SetAudioEnabled(bool value)
     {
@@ -120,13 +123,40 @@ public class Game : MonoBehaviour, IBrailler
     }
     public void OnEnterDown()
     {
+        if (tutorialOpen)
+        {
+            ShowTutorial(false);
+            return;
+        }
         if (selectedIndex == 0)
         {
-            OnClearButtonPress();
+            ShowTutorial(true);
         }
         else if (selectedIndex == 1)
         {
+            OnClearButtonPress();
+        }
+        else if (selectedIndex == 2)
+        {
             audioToggle.ToggleValue();
+        }
+    }
+    public void ShowTutorial(bool value)
+    {
+        tutorialOpen = value;
+        tutorial.SetActive(value);
+        if (value)
+        {
+            selectables.ElementAt(selectedIndex).Key.transform.GetChild(0).gameObject.SetActive(false);
+            audioSystem.PlaySound(audioTutorial, AudioSystem.SOUND_TYPE.NARRATOR);
+        }
+        else
+        {
+            if (!gameManager.PaperTestTutorialSeen)
+            {
+                gameManager.PaperTestTutorialSeen = true;
+            }
+            Select(selectedIndex, false);
         }
     }
     void Awake()
@@ -151,7 +181,15 @@ public class Game : MonoBehaviour, IBrailler
         gameManager = GameManager.Instance;
         audioSystem = AudioSystem.Instance;
         audioToggle.IsOn = gameManager.PaperTestAudioOn;
-        Select(0, false);
+        if (gameManager.PaperTestTutorialSeen)
+        {
+            ShowTutorial(false);
+            Select(0, false);
+        }
+        else
+        {
+            ShowTutorial(true);
+        }
         SetGuide(false);
         SetEscMenu(false);
     }
@@ -161,14 +199,14 @@ public class Game : MonoBehaviour, IBrailler
         {
             ToggleGuide();
         }
-        if (keyUpArrow.WasPressedThisFrame() && !escMenu.activeSelf)
+        if (keyUpArrow.WasPressedThisFrame() && !escMenu.activeSelf && !tutorialOpen)
         {
             if (selectedIndex > 0)
             {
                 Select(selectedIndex - 1, false);
             }
         }
-        if (keyDownArrow.WasPressedThisFrame() && !escMenu.activeSelf)
+        if (keyDownArrow.WasPressedThisFrame() && !escMenu.activeSelf && !tutorialOpen)
         {
             if (selectedIndex < selectables.Count - 1)
             {

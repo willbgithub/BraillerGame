@@ -70,9 +70,10 @@ public class ReactionGame : MonoBehaviour, IBrailler
         }
         else
         {
-            if (!gameManager.copyGameTutorialSeen)
+            if (!gameManager.CopyGameTutorialSeen)
             {
-                gameManager.copyGameTutorialSeen = true;
+                Debug.Log("Updated!!");
+                gameManager.CopyGameTutorialSeen = true;
                 StartCoroutine(StartRound(1));
             }
             Select(selectedIndex, false);
@@ -277,7 +278,7 @@ public class ReactionGame : MonoBehaviour, IBrailler
         brailleCellCopy.SetBackgroundColor(colorDefault);
         toggleLetterMode.IsOn = gameManager.LetterMode;
         toggleShowCopyCell.IsOn = gameManager.ShowCopyCell;
-        if (!gameManager.copyGameTutorialSeen)
+        if (!gameManager.CopyGameTutorialSeen)
         {
             ShowTutorial(true);
         }

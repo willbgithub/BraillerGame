@@ -21,6 +21,7 @@ public class AudioSystem : MonoBehaviour
     AudioMixerGroup voiceMixer;
     AudioSource narratorChannel;
     InputAction keyCtrl;
+    InputAction repeat;
     public enum SOUND_TYPE { IMMUNE, GAME, VOICE, NARRATOR };
 
     int maxChannels = 10;
@@ -33,6 +34,14 @@ public class AudioSystem : MonoBehaviour
     float delayTimer = 0;
 
     // Functions
+    public void RepeatNarrator()
+    {
+        if (narratorChannel.IsUnityNull() || narratorChannel.isPlaying)
+        {
+            return;
+        }
+        narratorChannel.Play();
+    }
     public float PlayCharacterQueue(List<char> queue)
     {
         audioQueue = new List<AudioClip>();
@@ -48,13 +57,11 @@ public class AudioSystem : MonoBehaviour
     }
     public void StopNarrator()
     {
-        for (int i = 0; i < audioSources.Count; i++)
+        if (narratorChannel.IsUnityNull())
         {
-            if (audioSources.ElementAt(i).Value == SOUND_TYPE.NARRATOR)
-            {
-                audioSources.ElementAt(i).Key.Stop();
-            }
+            return;
         }
+        narratorChannel.Stop();
     }
     public void Stop()
     {
@@ -65,6 +72,10 @@ public class AudioSystem : MonoBehaviour
     }
     public void OnSoundSettingsUpdate()
     {
+        if (gameManager.IsUnityNull())
+        {
+            return;
+        }
         float inverse = Mathf.Sqrt(1 / gameManager.narratorSpeed);
         voiceMixer.audioMixer.SetFloat("pitchBend", inverse);
         voiceMixer.audioMixer.SetFloat("pitchBend2", inverse);
@@ -289,6 +300,7 @@ public class AudioSystem : MonoBehaviour
 
         CreateDict();
         keyCtrl = InputSystem.actions.FindAction("Ctrl");
+        repeat = InputSystem.actions.FindAction("Repeat");
     }
     void Start()
     {
@@ -329,6 +341,10 @@ public class AudioSystem : MonoBehaviour
         if (keyCtrl.WasPressedThisFrame())
         {
             StopNarrator();
+        }
+        if (repeat.WasPressedThisFrame())
+        {
+            RepeatNarrator();
         }
     }
 }

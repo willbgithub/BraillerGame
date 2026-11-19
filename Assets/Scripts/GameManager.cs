@@ -67,7 +67,7 @@ public class GameManager : MonoBehaviour
         get { return paperTestAudioOn; }
         set { paperTestAudioOn = value; PlayerPrefs.SetInt("paperTestAudioOn", value ? 1 : 0); }
     }
-    public bool paperTestTutorialSeen = false;
+    bool paperTestTutorialSeen = false;
     public bool PaperTestTutorialSeen
     {
         get { return paperTestTutorialSeen; }
@@ -87,12 +87,14 @@ public class GameManager : MonoBehaviour
         get { return showCopyCell; }
         set { showCopyCell = value; PlayerPrefs.SetInt("showCopyCell", value ? 1 : 0); }
     }
-    public bool copyGameTutorialSeen = false;
+    bool copyGameTutorialSeen = false;
     public bool CopyGameTutorialSeen
     {
         get { return copyGameTutorialSeen; }
-        set { copyGameTutorialSeen = value; PlayerPrefs.SetInt("copyGameTutorialSeen", value ? 1 : 0);
-            Debug.Log("copyGameTutorialSeen set to " + value);
+        set
+        {
+            copyGameTutorialSeen = value;
+            PlayerPrefs.SetInt("copyGameTutorialSeen", value ? 1 : 0);
         }
     }
 

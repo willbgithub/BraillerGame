@@ -230,6 +230,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Repeat",
+                    "type": "Button",
+                    "id": "d48a6a1b-ff93-4cd1-b98f-e075d29d0ff2",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -813,6 +822,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Ctrl",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "76acc6ec-4a6a-43d8-9712-034ecd5a0d88",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Repeat",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
